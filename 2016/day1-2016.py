@@ -12,7 +12,6 @@ def rotate(rotateDir, facingDir):
     facingDir %= 4
     return facingDir
 
-
 def main():
 
     # dirs are starting at n, going clockwise
@@ -56,18 +55,11 @@ def main():
                     else:
                         passedThrough.append(passedLocation)
 
-        if dirs[facingDir] == 'n':
-            y += stepNum
-        elif dirs[facingDir] == 's':
-            y -= stepNum
-        elif dirs[facingDir] == 'w':
-            x -= stepNum
-        elif dirs[facingDir] == 'e':
-            x += stepNum
+        if dirs[facingDir] in "ns":
+            y += (stepNum*scalar)
+        else:
+            x += (stepNum*scalar)
         location = (x, y)
-
-
-
 
     firstDistance = abs(location[0]) + abs(location[1])
     secondDistance = abs(firstTwiceVisted[0]) + abs(firstTwiceVisted[1])
