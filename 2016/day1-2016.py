@@ -1,11 +1,13 @@
 # dirs are starting at n, going clockwise
 dirs = ['n', 'e', 's', 'w']
 facingDir = 0
+firstTwiceVisted = ()
+foundFTV = bool(0)
 
 x = 0
 y = 0
 coords = [(0, 0)]
-
+timesVisited = {}
 
 with open('day1-2016.txt', 'r') as f:
     data = f.read()
@@ -13,29 +15,27 @@ with open('day1-2016.txt', 'r') as f:
 
 for step in steps:
     rotateDir = step[0]
-    stepNum = int(step[1])
+    stepNum = int(step[1:])
     if rotateDir == 'L':
         facingDir -= 1
-        while facingDir < 0:
-            facingDir += 4
     else:
         facingDir += 1
-        while facingDir > 3:
-            facingDir -= 4
-    if facingDir == 0:
+    facingDir %= 4
+    if dirs[facingDir] == 'n':
         y += stepNum
-    elif facingDir == 1:
-        x += stepNum
-    elif facingDir == 2:
+    elif dirs[facingDir] == 's':
         y -= stepNum
-    elif facingDir == 3:
+    elif dirs[facingDir] == 'w':
         x -= stepNum
-    coords.append((x, y))
+    elif dirs[facingDir] == 'e':
+        x += stepNum
+    location = (x, y)
+    coords.append(location)
 
-lenCoords = len(coords)
-endPos = coords[lenCoords - 1]
-distance = abs(endPos[0]) + abs(endPos[1])
-print(distance)
+firstDistance = abs(location[0]) + abs(location[1])
+print(firstDistance)
+
+
 
 
 
