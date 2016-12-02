@@ -13,14 +13,15 @@ DIRECTIONS = {
     "R": [0, 1]
 }
 
-
 def main():
     lines = open('day2-2016.txt').read().splitlines()
 
-    # print(squareCode(lines))
-    print(diamondCode(lines))
+    print("Code to square grid: {}".format(squareCode(lines)))
+    print("Code to square grid: {}".format(diamondCode(lines)))
 
 def squareCode(lines):
+    boundary = len(SQUARE_GRID)
+
     loc = [1, 1]
     code = ""
 
@@ -28,14 +29,8 @@ def squareCode(lines):
         for step in line:
             direction = DIRECTIONS[step]
             loc = [x + y for x, y in zip(direction, loc)]
-            if loc[0] > 2:
-                loc[0] = 2
-            if loc[0] < 0:
-                loc[0] = 0
-            if loc[1] > 2:
-                loc[1] = 2
-            if loc[1] < 0:
-                loc[1] = 0
+            while not(all(pt in range(0, boundary) for pt in loc)):
+                loc = goBack(loc, direction)
         num = str(SQUARE_GRID[loc[0]][loc[1]])
         code += num
     return code
@@ -44,6 +39,7 @@ def goBack(loc, direction):
     return [x + y for x, y in zip([-x for x in direction], loc)]
 
 def diamondCode(lines):
+    boundary = len(DIAMOND_GRID)
     loc = [2, 0]
     code = ""
 
@@ -51,7 +47,7 @@ def diamondCode(lines):
         for step in line:
             direction = DIRECTIONS[step]
             loc = [x + y for x, y in zip(direction, loc)]
-            while (loc[0] > 4) or (loc[0] < 0) or (loc[1] > 4) or (loc[1] < 0) or DIAMOND_GRID[loc[0]][loc[1]] == '*':
+            while not(all(pt in range(0, boundary) for pt in loc)) or DIAMOND_GRID[loc[0]][loc[1]] == '*':
                 loc = goBack(loc, direction)
         num = str(DIAMOND_GRID[loc[0]][loc[1]])
         code += num
