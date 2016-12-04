@@ -1,22 +1,16 @@
-def dumbWay(sides):
-    x = 0
-    if ((sides[0] + sides[1]) > sides[2]) and ((sides[0] + sides[2]) > sides[1]) and ((sides[1] + sides[2]) > sides[0]):
-        x = 1
-    return x
-
-def betterWay(sides):
+def rowTest(sides):
     x = 1
     for idx in range(0, 3):
         thirdSide = sides[idx]
-        smallerSides = [s for s in sides if s != thirdSide]
-        if sum(smallerSides) < thirdSide:
+        # otherSideIdxs = [i for i in range(0, 3) if i != idx]
+        smallerSides = [sides[i] for i in [z for z in range(0, 3) if z != idx]]
+        if sum(smallerSides) <= thirdSide:
             x = 0
             break
     return x
 
 if __name__ == "__main__":
-    numPossibleDumb = 0
-    numPossibleBetter = 0
+    numPossible = 0
 
     with open('day3-2016.txt', 'r') as f:
         for line in f:
@@ -24,8 +18,7 @@ if __name__ == "__main__":
             sides = line.strip().split("  ")
             sides = [s for s in sides if len(s) > 0]
             sides = [int(s.strip()) for s in sides]
-            numPossibleDumb += dumbWay(sides)
-            numPossibleBetter += betterWay(sides)
+            numPossible += rowTest(sides)
 
-    print("Dumb way is {}".format(numPossibleDumb))
-    print("Better way is {}".format(numPossibleBetter))
+    print("Part 1: {}".format(numPossible))
+    
