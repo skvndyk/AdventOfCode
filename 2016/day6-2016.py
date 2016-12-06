@@ -15,6 +15,7 @@ if __name__ == "__main__":
             tempDict = {}
             for letter in col:
                 tempDict[letter] = tempDict.get(letter, 0) + 1
-            message += max(tempDict.keys(), key=(lambda k: tempDict[k]))
+            # change this according to part one (max) or part two (min)
+            message += min(tempDict.keys(), key=(lambda k: tempDict[k]))
 
     print(message)
