@@ -35,9 +35,16 @@ def printgrid(grid, width, height):
         print("\n")
         for w in range(width):
             print(grid[w, h], end='')
-    print('\n')
+    print("\n")
 
-
+def printgrid5(grid, width, height):
+    for w1 in range(0, width, 5):
+        for h in range(height):
+            print("\n")
+            for w2 in range(w1, w1+5):
+                print(grid[w2, h], end='')
+        print("\n")
+    print("\n")
 
 if __name__ == "__main__":
     lit_pixels = 0
@@ -49,12 +56,10 @@ if __name__ == "__main__":
             instructions = line.rstrip().split(" ")
             if instructions[0] == 'rect':
                 grid = makerectangle(instructions[1], grid)
-                # printgrid(grid, width, height)
             else:
                 grid = shiftpixels(instructions[1:5], grid, width, height)
-                # printgrid(grid, width, height)
     for value in grid.items():
         if value[1] == '#':
             lit_pixels += 1
-
+    printgrid5(grid, width, height)
     print(lit_pixels)
