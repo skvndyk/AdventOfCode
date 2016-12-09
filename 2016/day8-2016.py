@@ -26,6 +26,7 @@ def shiftpixels(parameters, grid, width, height):
             new_grid[(axis_num, move_y_pos)] = grid[(axis_num, y)]
     return new_grid
 
+
 def makegrid(width, height):
     return OrderedDict.fromkeys([(x, y) for x in range(0, width) for y in range(0, height)], '.')
 

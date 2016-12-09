@@ -8,7 +8,7 @@ while not foundNumber:
     print(x)
     result = md5((password + str(x)).encode()).hexdigest()
     if len(result) >= 5:
-        if result[0:5] == "00000":
+        if result[0:6] == "000000":
             foundNumber = bool(1)
         else:
             x += 1
