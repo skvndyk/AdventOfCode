@@ -11,9 +11,9 @@ if __name__ == "__main__":
         data = f.read()
         in_marker = False
         marker_exists = False
-        data = "A(2x2)BCD(2x2)EFG"
         len_data = len(data)
         x = 0
+
         while x < (len_data):
             if not marker_exists:
                 curr_char = data[x]
@@ -40,5 +40,5 @@ if __name__ == "__main__":
                 marker = ""
                 marker_exists = False
                 x = (pos + 1)
-    print(decompressed)
+    print(len(decompressed))
 
