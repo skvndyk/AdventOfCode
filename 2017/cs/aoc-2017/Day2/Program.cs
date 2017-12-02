@@ -30,9 +30,17 @@ namespace Day2
             }
             return sum;
         }
-        public static void Part2(string filePat)
+        public static int Part2(string filePath)
         {
+            int sum = 0;
+            List<List<string>> splitLines = ReadTextIntoLists(filePath);
+            foreach (List<string> row in splitLines)
+            {
+                List<int> intRow = row.ConvertAll(r => Int32.Parse(r)).ToList();
+                
 
+            }
+            return sum;
         }
         public static List<List<string>> ReadTextIntoLists(string filePath)
         {
@@ -44,6 +52,12 @@ namespace Day2
                 splitLines.Add(line.Split('\t').ToList());
             }
             return splitLines;
+        }
+
+        public static List<Tuple<int, int>> GetPermutations(List<int> values)
+        {
+            List<Tuple<int, int>> perms = new List<Tuple<int, int>>();
+            throw new NotImplementedException();
         }
     }
 }

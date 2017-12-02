@@ -19,6 +19,8 @@ namespace UnitTestProject2
         [TestMethod]
         public void Day2_P2()
         {
+            string filePath = "day2p2-2017.txt";
+            int results = Day2.Program.Part2(filePath);
         }
     }
 }
