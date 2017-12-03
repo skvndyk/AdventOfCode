@@ -21,6 +21,7 @@ namespace UnitTestProject2
         {
             string filePath = "day2p2-2017.txt";
             int results = Day2.Program.Part2(filePath);
+            Assert.AreEqual(9, results);
         }
     }
 }
