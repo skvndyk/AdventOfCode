@@ -52,6 +52,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Day2Tests.cs" />
+    <Compile Include="Day3Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +71,10 @@
     <ProjectReference Include="..\day2\Day2.csproj">
       <Project>{baa068c7-8b64-4c5b-8086-0c7e2ce8945c}</Project>
       <Name>Day2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Day3\Day3.csproj">
+      <Project>{4ca4dced-ca85-4d90-b937-fd78fd1b4cfa}</Project>
+      <Name>Day3</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
