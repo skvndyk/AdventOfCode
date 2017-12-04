@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,14 +12,25 @@ namespace Day3
     {
         public static void Main(string[] args)
         {
-            Part1();
-        }
-        public static void Part1()
-        {
-            Spiral spiral = new Spiral(36);
-            spiral.PrintSpiral();
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            int input = 312051;
+            stopWatch.Stop();
+            Console.WriteLine($"Part 1 answer: {Part1(input)}");
+            Console.WriteLine(stopWatch.ElapsedMilliseconds.ToString());
             Console.ReadLine();
         }
-       
+
+        public static int Part1(int input)
+        {
+            Spiral spiral = new Spiral(input);
+            return spiral.GetManhattanDistanceToCenter(input);
+        }
+
+        public static int Part2(int input)
+        {
+            Spiral spiral = new Spiral(input);
+            return spiral.GetManhattanDistanceToCenter(input);
+        }
     }
 }

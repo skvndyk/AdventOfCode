@@ -42,6 +42,8 @@ namespace Day3.Models
             }
         }
 
+
+        //todo this doesn't work with non-square spiral sizes
         public void PrintSpiral()
         {
             int valuesPrinted = 0;
@@ -66,6 +68,16 @@ namespace Day3.Models
                 Console.WriteLine(printingRow);
                 availableSquares = availableSquares.Where(s => squareRow.All(r => s.value != r.value)).ToList();
             }
+        }
+
+        public int GetManhattanDistanceToCenter(int squareValue)
+        {
+            Square startSquare = Squares.First(s => s.value == squareValue);
+            if (startSquare == null)
+            {
+                throw new Exception($"Square {squareValue} does not exist.");
+            }
+            return Math.Abs(startSquare.x) + Math.Abs(startSquare.y);
         }
 
         public Dictionary<string, int> GetMinsAndMaxes(List<Square> squares)
