@@ -29,7 +29,6 @@ namespace Day3.Models
                 //keep moving in this direction till you find a new square, then set its value
                 while (movedToSquare.value != null)
                 {
-                    dirIdx -= 1;
                     dirIdx = SquareMovement.Directions.GetPreviousIndex(dirIdx);
                     dirKey = SquareMovement.Directions[dirIdx];
                     movedToSquare = SquareMovement.Move(this, currSquare, dirKey);
@@ -62,7 +61,7 @@ namespace Day3.Models
                 string printingRow = "";
                 foreach (Square square in squareRow)
                 {
-                    printingRow += $"{square.value.ToString()}\t";
+                    printingRow += $"{square.value}\t";
                 }
                 Console.WriteLine(printingRow);
                 availableSquares = availableSquares.Where(s => squareRow.All(r => s.value != r.value)).ToList();
