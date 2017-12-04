@@ -23,14 +23,14 @@ namespace Day3
 
         public static int Part1(int input)
         {
-            Spiral spiral = new Spiral(input);
+            Spiral spiral = new Spiral(input, Spiral.PuzzlePart.Part1);
             return spiral.GetManhattanDistanceToCenter(input);
         }
 
         public static int Part2(int input)
         {
-            Spiral spiral = new Spiral(input);
-            return spiral.GetManhattanDistanceToCenter(input);
+            Spiral spiral = new Spiral(input, Spiral.PuzzlePart.Part2);
+            throw new NotImplementedException();
         }
     }
 }

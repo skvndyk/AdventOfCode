@@ -9,7 +9,12 @@ namespace Day3.Models
 {
     public class Spiral
     {
-        public Spiral(int maxVal)
+        public enum PuzzlePart
+        {
+            Part1,
+            Part2
+        };
+        public Spiral(int maxVal, PuzzlePart part)
         {
             Squares = new List<Square>();
             Squares.Add(new Square()
@@ -33,7 +38,7 @@ namespace Day3.Models
                     dirKey = SquareMovement.Directions[dirIdx];
                     movedToSquare = SquareMovement.Move(this, currSquare, dirKey);
                 }
-                movedToSquare.value = currSquare.value + 1;
+                movedToSquare.value = GetSquareValue(currSquare, movedToSquare, part);
 
                 //then cycle to next direction
                 dirIdx = SquareMovement.Directions.GetNextIndex(dirIdx);
@@ -42,7 +47,42 @@ namespace Day3.Models
             }
         }
 
+        public int GetSquareValue(Square currSquare, Square movedToSquare, PuzzlePart part)
+        {
+            if (part == PuzzlePart.Part1)
+            {
+                return currSquare.value + 1 ?? throw new Exception("Current square does not have a value!");
+            }
+            else
+            {
+                int x = currSquare.x;
+                int y = currSquare.y;
 
+                List<Tuple<int, int>> neighborList = new List<Tuple<int, int>>()
+                {
+                    Tuple.Create(x, y + 1),
+                    Tuple.Create(x, y - 1),
+                    Tuple.Create(x - 1, y),
+                    Tuple.Create(x - 1, y),
+                    Tuple.Create(x - 1, y + 1),
+                    Tuple.Create(x + 1, y + 1),
+                    Tuple.Create(x - 1, y - 1),
+                    Tuple.Create(x + 1, y - 1)
+
+                };
+                int squareSum = 0;
+                foreach (Tuple<int, int> nTuple in neighborList)
+                {
+                    if (Squares.Any(s => s.x == nTuple.Item1 && s.y == nTuple.Item2))
+                    {
+                        squareSum += Squares.First(s => s.x == nTuple.Item1 && s.y == nTuple.Item2).value ?? throw new Exception("Square has no value!");
+                    }
+                }
+                return squareSum;
+            }
+        }
+
+     
         //todo this doesn't work with non-square spiral sizes
         public void PrintSpiral()
         {
