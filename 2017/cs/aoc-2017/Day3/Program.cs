@@ -15,8 +15,9 @@ namespace Day3
         }
         public static void Part1()
         {
-            Spiral spiral = new Spiral(5);
+            Spiral spiral = new Spiral(7);
             spiral.PrintSpiral();
+            Console.ReadLine();
         }
        
     }

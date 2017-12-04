@@ -44,17 +44,28 @@ namespace Day3.Models
 
         public void PrintSpiral()
         {
-
-            Dictionary<string, int> minMaxDict = GetMinsAndMaxes(Squares);
-            int y = minMaxDict["maxY"];
-            int minX = minMaxDict["minX"];
-            int maxX = minMaxDict["maxX"];
-            List<string> row = new List<string>();
-            for (int i = minX; i <= maxX; i++)
+            int valuesPrinted = 0;
+            List<Square> availableSquares = Squares;
+            while (valuesPrinted < Squares.Count )
             {
-                row.Add($@"{Squares.First(s => s.x == i && s.y == y).value.ToString()}\n");
+                Dictionary<string, int> minMaxDict = GetMinsAndMaxes(availableSquares);
+                int y = minMaxDict["maxY"];
+                int minX = minMaxDict["minX"];
+                int maxX = minMaxDict["maxX"];
+                List<Square> squareRow = new List<Square>();
+                for (int i = minX; i <= maxX; i++)
+                {
+                    squareRow.Add(availableSquares.First(s => s.x == i && s.y == y));
+                    valuesPrinted += 1;
+                }
+                string printingRow = "";
+                foreach (Square square in squareRow)
+                {
+                    printingRow += $"{square.value.ToString()}\t";
+                }
+                Console.WriteLine(printingRow);
+                availableSquares = availableSquares.Where(s => squareRow.All(r => s.value != r.value)).ToList();
             }
-
         }
 
         public Dictionary<string, int> GetMinsAndMaxes(List<Square> squares)
