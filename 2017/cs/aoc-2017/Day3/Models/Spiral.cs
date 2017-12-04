@@ -30,6 +30,7 @@ namespace Day3.Models
                 while (movedToSquare.value != null)
                 {
                     dirIdx -= 1;
+                    dirIdx = SquareMovement.Directions.GetPreviousIndex(dirIdx);
                     dirKey = SquareMovement.Directions[dirIdx];
                     movedToSquare = SquareMovement.Move(this, currSquare, dirKey);
                 }

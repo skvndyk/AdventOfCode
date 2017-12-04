@@ -12,5 +12,9 @@ namespace Day3
         {
             return index + 1 > list.Count() - 1 ? 0 : index + 1;
         }
+        public static int GetPreviousIndex<T>(this List<T> list, int index)
+        {
+            return index - 1 < 0 ? list.Count() - 1 : index - 1;
+        }
     }
 }
