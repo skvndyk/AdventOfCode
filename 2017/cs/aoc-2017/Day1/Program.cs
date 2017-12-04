@@ -37,8 +37,6 @@ namespace Day1
                         sum += Int32.Parse(input[i].ToString());
                     }
                 }
-
-
             }
             return sum;
         }
