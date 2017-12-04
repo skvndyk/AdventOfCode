@@ -12,12 +12,12 @@ namespace Day3
     {
         public static void Main(string[] args)
         {
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-            int input = 312051;
-            stopWatch.Stop();
-            Console.WriteLine($"Part 1 answer: {Part1(input)}");
-            Console.WriteLine(stopWatch.ElapsedMilliseconds.ToString());
+            int input1 = 312051;
+            //Console.WriteLine($"Part 1 answer: {Part1(input1)}");
+            //Console.WriteLine(stopWatch.ElapsedMilliseconds.ToString());
+            int input2_1 = 10000;
+            int input2_2 = 312051;
+            Console.WriteLine($"Part 2 answer: {Part2(input2_1, input2_2)}");
             Console.ReadLine();
         }
 
@@ -27,10 +27,10 @@ namespace Day3
             return spiral.GetManhattanDistanceToCenter(input);
         }
 
-        public static int Part2(int input)
+        public static int Part2(int input1, int input2)
         {
-            Spiral spiral = new Spiral(input, Spiral.PuzzlePart.Part2);
-            throw new NotImplementedException();
+            Spiral spiral = new Spiral(input1, Spiral.PuzzlePart.Part2, input2);
+            return spiral.Squares.Last().value ?? throw new Exception("square has no value!");
         }
     }
 }

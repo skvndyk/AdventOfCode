@@ -14,7 +14,8 @@ namespace Day3.Models
             Part1,
             Part2
         };
-        public Spiral(int maxVal, PuzzlePart part)
+
+        public Spiral(int maxVal, PuzzlePart puzzlePart, int testValue = 0)
         {
             Squares = new List<Square>();
             Squares.Add(new Square()
@@ -38,8 +39,15 @@ namespace Day3.Models
                     dirKey = SquareMovement.Directions[dirIdx];
                     movedToSquare = SquareMovement.Move(this, currSquare, dirKey);
                 }
-                movedToSquare.value = GetSquareValue(currSquare, movedToSquare, part);
-
+                movedToSquare.value = GetSquareValue(currSquare, movedToSquare, puzzlePart);
+                if (testValue != 0)
+                {
+                    if (movedToSquare.value > testValue)
+                    {
+                        Squares.Add(movedToSquare);
+                        break;
+                    }
+                }
                 //then cycle to next direction
                 dirIdx = SquareMovement.Directions.GetNextIndex(dirIdx);
                 currSquare = movedToSquare;
@@ -47,23 +55,23 @@ namespace Day3.Models
             }
         }
 
-        public int GetSquareValue(Square currSquare, Square movedToSquare, PuzzlePart part)
+        public int GetSquareValue(Square currSquare, Square movedToSquare, PuzzlePart puzzlePart)
         {
-            if (part == PuzzlePart.Part1)
+            if (puzzlePart == PuzzlePart.Part1)
             {
                 return currSquare.value + 1 ?? throw new Exception("Current square does not have a value!");
             }
             else
             {
-                int x = currSquare.x;
-                int y = currSquare.y;
+                int x = movedToSquare.x;
+                int y = movedToSquare.y;
 
                 List<Tuple<int, int>> neighborList = new List<Tuple<int, int>>()
                 {
                     Tuple.Create(x, y + 1),
                     Tuple.Create(x, y - 1),
                     Tuple.Create(x - 1, y),
-                    Tuple.Create(x - 1, y),
+                    Tuple.Create(x + 1, y),
                     Tuple.Create(x - 1, y + 1),
                     Tuple.Create(x + 1, y + 1),
                     Tuple.Create(x - 1, y - 1),
