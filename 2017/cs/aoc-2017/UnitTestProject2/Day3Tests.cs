@@ -23,28 +23,28 @@ namespace UnitTestProject2
         public void Day3_P1A()
         {
             int input = 1;
-            Spiral spiral = new Spiral(input);
+            Spiral spiral = new Spiral(input, Spiral.PuzzlePart.Part1);
             Assert.AreEqual(0, spiral.GetManhattanDistanceToCenter(input));
         }
         [TestMethod]
         public void Day3_P1B()
         {
             int input = 12;
-            Spiral spiral = new Spiral(input);
+            Spiral spiral = new Spiral(input, Spiral.PuzzlePart.Part1);
             Assert.AreEqual(3, spiral.GetManhattanDistanceToCenter(input));
         }
         [TestMethod]
         public void Day3_P1C()
         {
             int input = 23;
-            Spiral spiral = new Spiral(input);
+            Spiral spiral = new Spiral(input, Spiral.PuzzlePart.Part1);
             Assert.AreEqual(2, spiral.GetManhattanDistanceToCenter(input));
         }
         [TestMethod]
         public void Day3_P1D()
         {
             int input = 1024;
-            Spiral spiral = new Spiral(input);
+            Spiral spiral = new Spiral(input, Spiral.PuzzlePart.Part1);
             Assert.AreEqual(31, spiral.GetManhattanDistanceToCenter(input));
         }
     }
