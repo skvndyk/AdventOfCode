@@ -20,7 +20,6 @@ namespace Day4
         public static int Part1(List<string> lines)
         {
             int numValid = 0;
-            int numDupesFound = 0;
             foreach (string line in lines)
             {
                 List<string> words = line.Split(' ').ToList();
@@ -29,11 +28,7 @@ namespace Day4
                 {
                     hashSetWords.Add(word);
                 }
-                if (words.Count != hashSetWords.Count)
-                {
-                    numDupesFound++;
-                }
-                else
+                if (words.Count == hashSetWords.Count)
                 {
                     numValid++;
                 }
