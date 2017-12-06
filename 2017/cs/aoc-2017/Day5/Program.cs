@@ -21,22 +21,16 @@ namespace Day5
         public static int Part1(List<int> jumpList)
         {
             List<int> origJumpList = jumpList;
-            int idx = 0;
+            int currIdx = 0;
+            int prevIdx;
+            
             int numSteps = 0;
-            while (idx < jumpList.Count)
+            while (currIdx < jumpList.Count)
             {
-                if ((idx += jumpList[idx]) > jumpList.Count)
-                {
-                    numSteps++;
-                    break;
-                }
-                else
-                {
-                    idx += jumpList[idx];
-                    jumpList[idx]++;
-                    numSteps++;
-                }
-               
+                prevIdx = currIdx;
+                currIdx += jumpList[prevIdx];
+                jumpList[prevIdx]++;
+                numSteps++;
             }
             return numSteps;
         }
