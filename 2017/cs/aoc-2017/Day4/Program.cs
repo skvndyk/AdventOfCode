@@ -19,35 +19,27 @@ namespace Day4
 
         public static int Part1(List<string> lines)
         {
-            bool dupeFound;
             int numValid = 0;
+            int numDupesFound = 0;
             foreach (string line in lines)
             {
-                dupeFound = false;
                 List<string> words = line.Split(' ').ToList();
-                for (int i = 0; i < words.Count; i++)
+                HashSet<string> hashSetWords = new HashSet<string>();
+                foreach (string word in words)
                 {
-                    if (dupeFound)
-                    {
-                        break;
-                    }
-                    for (int j = i + 1; j < words.Count; j++)
-                    {
-                            if (String.Equals(words[i], words[j]))
-                            {
-                                dupeFound = true;
-                                break;
-                            }
-                    }
+                    hashSetWords.Add(word);
                 }
-                if (!dupeFound)
+                if (words.Count != hashSetWords.Count)
                 {
-                    numValid += 1;
+                    numDupesFound++;
+                }
+                else
+                {
+                    numValid++;
                 }
             }
-            
             return numValid;
         }
-       
+
     }
 }
