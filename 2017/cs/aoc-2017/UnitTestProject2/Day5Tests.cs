@@ -15,6 +15,14 @@ namespace UnitTestProject2
             int numSteps = Day5.Program.Part1(input);
             Assert.AreEqual(5, numSteps);
         }
-       
+
+        [TestMethod]
+        public void Day3_P2()
+        {
+            List<int> input = new List<int>() { 0, 3, 0, 1, -3 };
+            int numSteps = Day5.Program.Part2(input);
+            Assert.AreEqual(10, numSteps);
+        }
+
     }
 }
