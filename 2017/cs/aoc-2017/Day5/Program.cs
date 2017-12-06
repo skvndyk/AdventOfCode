@@ -14,7 +14,7 @@ namespace Day5
             string input = System.IO.File.ReadAllText(filePath);
             List<string> jumpListString = input.Split('\n').ToList();
             List<int> jumpList = jumpListString.Select(int.Parse).ToList();
-            Console.WriteLine($"Part 1: {Part1(jumpList)}");
+            //Console.WriteLine($"Part 1: {Part1(jumpList)}");
             Console.WriteLine($"Part 2: {Part2(jumpList)}");
             Console.ReadLine();
         }
