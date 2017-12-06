@@ -10,7 +10,7 @@ namespace Day5
     {
         static void Main(string[] args)
         {
-            string filePath = "day4-2017.txt";
+            string filePath = "day5-2017.txt";
             string input = System.IO.File.ReadAllText(filePath);
             List<string> jumpListString = input.Split('\n').ToList();
             List<int> jumpList = jumpListString.Select(int.Parse).ToList();
@@ -20,7 +20,6 @@ namespace Day5
 
         public static int Part1(List<int> jumpList)
         {
-            List<int> origJumpList = jumpList;
             int currIdx = 0;
             int prevIdx;
             
