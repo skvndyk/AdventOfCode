@@ -20,7 +20,7 @@ namespace Day6
 
         public static void Part1(List<int> blockInts)
         {
-            
+            List<Bank> banks = IntsToBanks(blockInts);
         }   
 
         public static List<Bank> IntsToBanks(List<int> blockInts)

@@ -55,5 +55,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AocLib\AocLib.csproj">
+      <Project>{dd53742e-3fbc-4f3b-a2ec-b1f217918e83}</Project>
+      <Name>AocLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
