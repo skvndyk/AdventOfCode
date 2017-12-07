@@ -57,6 +57,7 @@
     <Compile Include="Day4Tests.cs" />
     <Compile Include="Day1Tests.cs" />
     <Compile Include="Day5Tests.cs" />
+    <Compile Include="Day6Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="day2p1-2017.txt">
