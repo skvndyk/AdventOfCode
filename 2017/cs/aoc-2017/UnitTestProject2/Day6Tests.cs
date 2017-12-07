@@ -14,7 +14,8 @@ namespace UnitTestProject2
         public void Day6_P1()
         {
             List<int> blockInts = new List<int>() { 0, 2, 7, 0 };
-            Day6.Program.Part1(blockInts);
+            int cycles = Day6.Program.Part1(blockInts);
+            Assert.AreEqual(5, cycles);
         }
 
         [TestMethod]
