@@ -25,9 +25,12 @@ namespace Day6
             BankConfig currConfig = new BankConfig(){Banks = banks };
             while (!seenConfigs.Any(c => c.Equals(currConfig)))
             {
-                
+                List<Bank> currBanks = currConfig.Banks;
+                List<Bank> maxBanks = currBanks.Where(b => b.NumBlocks == currBanks.Max(c => c.NumBlocks)).ToList();
+                Bank bankToDistribute = maxBanks.First(m => m.Index == maxBanks.Min(m1 => m1.Index));
+                BankConfig newConfig = DistributeBlocks(currConfig, bankToDistribute);
             }
-            //todo need equality comparison for currConfig
+
             //compare current config to seen configs
             //while current config != any of the seen configs,
             //LOOP
@@ -38,6 +41,11 @@ namespace Day6
         public static List<Bank> IntsToBanks(List<int> blockInts)
         {
             return blockInts.Select((b, i) => new Bank() {Index = i, NumBlocks = b}).ToList();
+        }
+
+        public static BankConfig DistributeBlocks(BankConfig inputBankConfig, Bank bankToDistribute)
+        {
+            throw new NotImplementedException();
         }
 
        
