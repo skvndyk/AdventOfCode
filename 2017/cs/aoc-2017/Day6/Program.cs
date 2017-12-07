@@ -21,11 +21,26 @@ namespace Day6
         public static void Part1(List<int> blockInts)
         {
             List<Bank> banks = IntsToBanks(blockInts);
+            List<BankConfig> seenConfigs = new List<BankConfig>();
+            BankConfig currConfig = new BankConfig(){Banks = banks };
+            while (!seenConfigs.Any(c => c.Equals(currConfig)))
+            {
+                
+            }
+            //todo need equality comparison for currConfig
+            //compare current config to seen configs
+            //while current config != any of the seen configs,
+            //LOOP
+            //get bank with most blocks (ties resolved by smallest idx)
+            //moving in a circle, add all of its blocks to the rest of the banks
         }   
 
         public static List<Bank> IntsToBanks(List<int> blockInts)
         {
-            return blockInts.Select(i => new Bank() {NumBlocks = i}).ToList();
+            return blockInts.Select((b, i) => new Bank() {Index = i, NumBlocks = b}).ToList();
         }
+
+       
+        
     }
 }

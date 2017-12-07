@@ -8,6 +8,17 @@ namespace Day6.Models
 {
     public class BankConfig
     {
-        private List<Bank> Banks { get; set; }
+        public List<Bank> Banks { get; set; }
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            BankConfig b = obj as BankConfig;
+            if (b == null) return false;
+            if (Banks.SequenceEqual(b.Banks))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
