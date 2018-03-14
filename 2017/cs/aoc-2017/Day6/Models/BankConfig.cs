@@ -8,7 +8,25 @@ namespace Day6.Models
 {
     public class BankConfig
     {
+        public BankConfig()
+        {
+            Banks = new List<Bank>();
+        }
         public List<Bank> Banks { get; set; }
+
+        public BankConfig Copy()
+        {
+            BankConfig newConfig = new BankConfig();
+            foreach (Bank bank in Banks)
+            {
+                newConfig.Banks.Add(new Bank()
+                {
+                    Index = bank.Index,
+                    NumBlocks = bank.NumBlocks
+                });
+            }
+            return newConfig;
+        }
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
