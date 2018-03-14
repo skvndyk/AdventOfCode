@@ -14,8 +14,16 @@ namespace UnitTestProject2
         public void Day6_P1()
         {
             List<int> blockInts = new List<int>() { 0, 2, 7, 0 };
-            int cycles = Day6.Program.Part1(blockInts);
-            Assert.AreEqual(5, cycles);
+            List<BankConfig> seenConfigs = Day6.Program.Part1(blockInts).Item1;
+            Assert.AreEqual(5, seenConfigs.Count);
+        }
+
+        [TestMethod]
+        public void Day6_P2()
+        {
+            List<int> blockInts = new List<int>() { 0, 2, 7, 0 };
+            Tuple<List<BankConfig>, BankConfig> part1Results = Day6.Program.Part1(blockInts);
+            Assert.AreEqual(4, Day6.Program.Part2(part1Results));
         }
 
         [TestMethod]

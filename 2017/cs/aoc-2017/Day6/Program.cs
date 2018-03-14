@@ -17,17 +17,20 @@ namespace Day6
             string input = System.IO.File.ReadAllText(filePath);
             List<string> blockStrings = input.Split('\t').ToList();
             List<int> blockInts = blockStrings.Select(int.Parse).ToList();
-            Console.WriteLine($"Part 1: {Part1(blockInts)}");
+            Tuple<List<BankConfig>, BankConfig> part1Results = Part1(blockInts);
+            int numCycles = Part2(part1Results);
+            Console.WriteLine($"Part 1: {part1Results.Item1.Count}");
+            Console.WriteLine($"Part 2: {numCycles}");
             Console.ReadLine();
         }
 
-        public static int Part1(List<int> blockInts)
+        //not super pleased about this signature, make another class? go class crazy??
+        public static Tuple<List<BankConfig>, BankConfig> Part1(List<int> blockInts)
         {
             List<Bank> banks = IntsToBanks(blockInts);
             List<BankConfig> seenConfigs = new List<BankConfig>();
             BankConfig currConfig = new BankConfig(){Banks = banks };
             BankConfig newConfig = currConfig.Copy();
-            int cycles = 0;
             while (!seenConfigs.Any(c => c.Equals(newConfig)))
             {
                 seenConfigs.Add(newConfig);
@@ -36,10 +39,21 @@ namespace Day6
                 List<Bank> maxBanks = currBanks.Where(b => b.NumBlocks == currBanks.Max(c => c.NumBlocks)).ToList();
                 Bank bankToDistribute = maxBanks.First(m => m.Index == maxBanks.Min(m1 => m1.Index));
                 newConfig = DistributeBlocks(currConfig, bankToDistribute);
-                cycles++;
             }
-            return cycles;
-        }   
+            BankConfig loopedConfig = newConfig;
+            var tuple = Tuple.Create(seenConfigs, loopedConfig);
+            return tuple;
+        }
+
+        public static int Part2(Tuple<List<BankConfig>, BankConfig> part1Results)
+        {
+            List<BankConfig> seenConfigs = part1Results.Item1;
+            BankConfig loopedConfig = part1Results.Item2;
+            IEnumerable<BankConfig> loopConfigs = seenConfigs.Where(c => c.Equals(loopedConfig));
+            //this expression is gross!
+            int idx = loopConfigs.Select(x => seenConfigs.IndexOf(x)).ToList()[0];
+            return part1Results.Item1.Count - idx;
+        }
 
         public static List<Bank> IntsToBanks(List<int> blockInts)
         {
