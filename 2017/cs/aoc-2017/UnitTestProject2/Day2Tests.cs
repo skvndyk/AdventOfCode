@@ -11,7 +11,7 @@ namespace UnitTestProject2
         [TestMethod]
         public void Day2_P1()
         {
-            string filePath = "day2p1-2017.txt";
+            string filePath = "TestInput/Day2/day2p1-2017.txt";
             int results = Day2.Program.Part1(filePath);
             Assert.AreEqual(18, results);
         }
@@ -19,7 +19,7 @@ namespace UnitTestProject2
         [TestMethod]
         public void Day2_P2()
         {
-            string filePath = "day2p2-2017.txt";
+            string filePath = "TestInput/Day2/day2p2-2017.txt";
             int results = Day2.Program.Part2(filePath);
             Assert.AreEqual(9, results);
         }
