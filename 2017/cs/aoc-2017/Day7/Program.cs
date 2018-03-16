@@ -14,13 +14,19 @@ namespace Day7
         {
             string filePath = "day7-2017.txt";
             string input = System.IO.File.ReadAllText(filePath);
-            List<Prog> firstPassProgs = ParseFile(input);
-            //todo get children!
+            Prog baseProg = Part1(input);
+            Console.WriteLine($@"Part 1: {baseProg.Name}");
+            Console.ReadLine();
         }
 
-        public static void Part1()
+        public static Prog Part1(string input)
         {
-           
+            List<Prog> firstPassProgs = ParseFile(input);
+            foreach (Prog prog in firstPassProgs)
+            {
+                SetRelationships(firstPassProgs, prog);
+            }
+            return firstPassProgs.First(p => p.ParentProgList.Count == 0);
         }
 
         public static void Part2()
@@ -31,7 +37,7 @@ namespace Day7
         public static List<Prog> ParseFile(string input)
         {
             List<Prog> progs = new List<Prog>();
-            string pattern = @"([a-z]*) \((\d+)\)(?: (->) (.*)(?=\))?";
+            string pattern = @"([a-z]*) \((\d+)\)( -> (.*))?";
             MatchCollection matches = Regex.Matches(input, pattern);
             foreach (Match match in matches)
             {
@@ -40,28 +46,33 @@ namespace Day7
                     Name = match.Groups[1].Value,
                     Weight = int.Parse(match.Groups[2].Value)
                 };
-                if (match.Groups.Count > 3)
+                if (match.Groups[3].Value != string.Empty)
                 {
-                    prog.ChildStringList = match.Groups[4].Value;
+                    string children = match.Groups[4].Value;
+                    prog.ChildStringList = Regex.Replace(children, @"\s", "").Split(',').ToList();
                 }
                 progs.Add(prog);
             }
             return progs;
         }
 
-        public static List<Prog> GetChildren(string childString)
+        public static List<Prog> SetRelationships(List<Prog> allProgs, Prog currProg)
         {
-            string noSpaceChild = Regex.Replace(childString, @"\s", "");
-            List<string> splitChildStrings = noSpaceChild.Split(',').ToList();
-            return splitChildStrings.Select(splitChildString => new Prog() {Name = splitChildString}).ToList();
-            //todo get child name, look for child in list of progs
-            //todo if it already exists, set them equal
-            //todo if not, create it
-            //todo do this recursively
-
-            //ex: abc => def ghi jkl
-            //ex: def => qrs tuv wyx (do you want to go down to the leaf right away?)
-            // 
+            if (currProg.ChildStringList.Count > 0)
+            {
+                foreach (string childString in currProg.ChildStringList)
+                {
+                    Prog childProg = allProgs.First(p => p.Name == childString);
+                    if (childProg != null)
+                    {
+                        currProg.ChildProgList.Add(childProg);
+                        childProg.ParentProgList.Add(currProg);
+                    }
+                }
+            }
+            return allProgs;
         }
+
+        
     }
 }
