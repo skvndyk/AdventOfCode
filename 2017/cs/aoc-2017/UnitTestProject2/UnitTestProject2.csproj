@@ -59,6 +59,7 @@
     <Compile Include="Day5Tests.cs" />
     <Compile Include="Day6Tests.cs" />
     <Compile Include="Day7Tests.cs" />
+    <Compile Include="Day8Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestInput\Day2\day2p1-2017.txt">
@@ -68,6 +69,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestInput\Day7\day7-2017.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestInput\Day8\day8-2017.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -99,6 +103,10 @@
     <ProjectReference Include="..\Day7\Day7.csproj">
       <Project>{4bed3ef3-1eae-47cf-b5fe-07a4d1ba386b}</Project>
       <Name>Day7</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Day8\Day8.csproj">
+      <Project>{017a9718-f4fd-471e-9c0d-eb1dbb21bacb}</Project>
+      <Name>Day8</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
