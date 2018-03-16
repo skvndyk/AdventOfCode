@@ -14,8 +14,10 @@ namespace Day7
         {
             string filePath = "day7-2017.txt";
             string input = System.IO.File.ReadAllText(filePath);
-            Prog baseProg = Part1(input);
-            Console.WriteLine($@"Part 1: {baseProg.Name}");
+            //todo not crazy about tuple useage here, again.
+            Prog part1Result = Part1(input);
+            Part2(part1Result);
+            Console.WriteLine($@"Part 1: {part1Result.Name}");
             Console.ReadLine();
         }
 
@@ -29,11 +31,29 @@ namespace Day7
             return firstPassProgs.First(p => p.ParentProgList.Count == 0);
         }
 
-        public static void Part2()
+        public static void Part2(Prog baseProg)
         {
+            List<Branch> branches = new List<Branch>();
+            //start at base, find total of each branch's weight
+            foreach (Prog childProg in baseProg.ChildProgList)
+            {
+                int branchWeight = 0;
+                branchWeight += childProg.Weight;
+                TraverseTree(childProg, ref branchWeight);
+                branches.Add(new Branch() { Parent = baseProg, BranchWeight = branchWeight});
+            }
 
         }
 
+        public static Prog TraverseTree(Prog parentProg, ref int branchWeight)
+        {
+            foreach (Prog childProg in parentProg.ChildProgList)
+            {
+                branchWeight += childProg.Weight;
+                TraverseTree(childProg, ref branchWeight);
+            }
+            return parentProg;
+        }
         public static List<Prog> ParseFile(string input)
         {
             List<Prog> progs = new List<Prog>();

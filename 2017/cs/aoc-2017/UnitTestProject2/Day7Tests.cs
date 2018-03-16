@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Day7;
 using Day7.Models;
@@ -22,11 +23,19 @@ namespace UnitTestProject2
         {
             string filePath = "TestInput/Day7/day7-2017.txt";
             string input = System.IO.File.ReadAllText(filePath);
-            Prog baseProg = Program.Part1(input);
-            Assert.AreEqual("tknk", baseProg.Name);
+            Tuple<List<Prog>, Prog> part1Result = Program.Part1(input);
+            Assert.AreEqual("tknk", part1Result.Item2.Name);
         }
 
-
+        [TestMethod]
+        public void Day7_P2Test()
+        {
+            string filePath = "TestInput/Day7/day7-2017.txt";
+            string input = System.IO.File.ReadAllText(filePath);
+            Tuple<List<Prog>, Prog> part1Result = Program.Part1(input);
+            Program.Part2(part1Result);
+        }
+        
         //not an actual test, just messing around w regex
         [TestMethod]
         public void RegexTest()
