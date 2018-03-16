@@ -23,8 +23,8 @@ namespace UnitTestProject2
         {
             string filePath = "TestInput/Day7/day7-2017.txt";
             string input = System.IO.File.ReadAllText(filePath);
-            Tuple<List<Prog>, Prog> part1Result = Program.Part1(input);
-            Assert.AreEqual("tknk", part1Result.Item2.Name);
+            Prog part1Result = Program.Part1(input);
+            Assert.AreEqual("tknk", part1Result.Name);
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace UnitTestProject2
         {
             string filePath = "TestInput/Day7/day7-2017.txt";
             string input = System.IO.File.ReadAllText(filePath);
-            Tuple<List<Prog>, Prog> part1Result = Program.Part1(input);
+            Prog part1Result = Program.Part1(input);
             Program.Part2(part1Result);
         }
         

@@ -19,5 +19,6 @@ namespace Day7.Models
         public List<string> ChildStringList { get; set; }
         public List<Prog> ChildProgList { get; set; }
         public List<Prog> ParentProgList { get; set; }
+        public List<Branch> BranchList { get; set; }
     }
 }

@@ -38,22 +38,36 @@ namespace Day7
             foreach (Prog childProg in baseProg.ChildProgList)
             {
                 int branchWeight = 0;
+                List<Prog> children = new List<Prog>();
                 branchWeight += childProg.Weight;
-                TraverseTree(childProg, ref branchWeight);
-                branches.Add(new Branch() { Parent = baseProg, BranchWeight = branchWeight});
+                TraverseTree(childProg, ref branchWeight,ref children);
+                branches.Add(new Branch() { Parent = baseProg, BranchWeight = branchWeight, FirstGenChildren = children});
             }
+            //find branch w/different weight
+            Branch diffBranch = branches.GroupBy(b => b.BranchWeight).Select(b => b.First()).ToList().First();
 
         }
 
-        public static Prog TraverseTree(Prog parentProg, ref int branchWeight)
+        public static Prog TraverseTree(Prog parentProg, ref int branchWeight, ref List<Prog> children)
         {
             foreach (Prog childProg in parentProg.ChildProgList)
             {
                 branchWeight += childProg.Weight;
-                TraverseTree(childProg, ref branchWeight);
+                children.Add(childProg);
+                TraverseTree(childProg, ref branchWeight, ref children);
             }
             return parentProg;
         }
+
+        public static Prog TraverseTree(Prog parentProg)
+        {
+            foreach (Prog childProg in parentProg.ChildProgList)
+            {
+                TraverseTree(childProg);
+            }
+            return parentProg;
+        }
+
         public static List<Prog> ParseFile(string input)
         {
             List<Prog> progs = new List<Prog>();
