@@ -45,6 +45,25 @@ namespace Day7
             }
             //find branch w/different weight
             Branch diffBranch = branches.GroupBy(b => b.BranchWeight).Select(b => b.First()).ToList().First();
+            foreach (Prog firstGenChild in diffBranch.FirstGenChildren)
+            {
+                GetDifferentBranch(firstGenChild);
+            }
+        }
+
+        public static void GetDifferentBranch(Prog parentProg)
+        {
+            List<Branch> branches = new List<Branch>();
+            foreach (Prog childProg in parentProg.ChildProgList)
+            {
+                int branchWeight = 0;
+                List<Prog> children = new List<Prog>();
+                branchWeight += childProg.Weight;
+                TraverseTree(childProg, ref branchWeight, ref children);
+                branches.Add(new Branch() { Parent = parentProg, BranchWeight = branchWeight, FirstGenChildren = children });
+            }
+            //find branch w/different weight
+            Branch diffBranch = branches.GroupBy(b => b.BranchWeight).Select(b => b.First()).ToList().First();
 
         }
 

@@ -14,12 +14,15 @@ namespace Day8
         {
             string filePath = "day8-2017.txt";
             string input = System.IO.File.ReadAllText(filePath);
-            Console.WriteLine($@"Part 1: {ProcessLine(input)}");
+            Console.WriteLine($@"Part 1: {ProcessLine(input).Part1}");
+            Console.WriteLine($@"Part 2: {ProcessLine(input).Part2}");
             Console.ReadLine();
         }
 
-        public static int ProcessLine(string input)
+        public static Solutions ProcessLine(string input)
         {
+            int maxValue = 0;
+            int currMaxValue;
             List<Register> registers = new List<Register>();
             string pattern = @"([a-z]+) (inc\b|dec\b) (-?\d+) (if) ([a-z]+) (>|<|==|<=|>=|!=) (-?\d+)";
 
@@ -41,8 +44,20 @@ namespace Day8
                 };
                 instruction.RegisterToModify = instruction.FindOrCreateRegister(instruction.RegisterToModifyName, ref registers);
                 instruction.PerformInstruction(ref registers);
+
+                currMaxValue = registers.First(r2 => r2.Value == registers.Max(r1 => r1.Value)).Value;
+                if (currMaxValue > maxValue)
+                {
+                    maxValue = currMaxValue;
+                }
             }
-            return registers.First(r2 => r2.Value == registers.Max(r1 => r1.Value)).Value;
+
+            return new Solutions()
+            {
+                Part1 = registers.First(r2 => r2.Value == registers.Max(r1 => r1.Value)).Value,
+                Part2 = maxValue
+            };
+           
         }
     }
 }
