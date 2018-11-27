@@ -18,19 +18,19 @@ namespace Day5
             string input = System.IO.File.ReadAllText(filePath);
             List<string> inputList = ParseInput(input);
             Console.WriteLine($@"Part1 answer: {Part1(inputList)}");
-            //Console.WriteLine($@"Part2 answer: {Part2(inputList)}");
+            Console.WriteLine($@"Part2 answer: {Part2(inputList)}");
             Console.ReadLine();
 
         }
 
         public static int Part1(List<string> inputList)
         {
-            return inputList.Count(str => IsGoodString(str));
+            return inputList.Count(str => IsGoodStringPart1(str));
         }
 
         public static int Part2(List<string> inputList)
         {
-            throw new NotImplementedException();
+            return inputList.Count(str => IsGoodStringPart2(str));
         }
 
         public static List<string> ParseInput(string input)
@@ -38,15 +38,15 @@ namespace Day5
             return input.Split(Environment.NewLine.ToCharArray()).ToList();
         }
 
-        public static bool IsGoodString(string input) => HasThreePlusVowels(input) && HasRepetitionPairs(input) && !HasBadString(input);
+        public static bool IsGoodStringPart1(string input) => HasThreePlusVowelsPart1(input) && HasRepetitionPairsPart1(input) && !HasBadStringPart1(input);
  
-        public static bool HasThreePlusVowels(string input)
+        public static bool HasThreePlusVowelsPart1(string input)
         {
             int numVowels = input.Count(ch => vowels.Any(v => v == ch));
             return numVowels >= 3;
         }
 
-        public static bool HasRepetitionPairs(string input)
+        public static bool HasRepetitionPairsPart1(string input)
         {
             bool hasRepetitionPair = false;
             for (int i = 0; i < input.Length - 1; i++)
@@ -54,12 +54,13 @@ namespace Day5
                 if (input[i] == input[i+1])
                 {
                     hasRepetitionPair = true;
+                    break;
                 }
             }
             return hasRepetitionPair;
         }
 
-        public static bool HasBadString(string input)
+        public static bool HasBadStringPart1(string input)
         {
             bool hasBadString = false;
             string subString = "";
@@ -73,6 +74,43 @@ namespace Day5
                 }
             }
             return hasBadString;
+        }
+
+        public static bool IsGoodStringPart2(string input) =>
+            HasRepeatWithOneInbetweenPart2(input) && HasNonOverlapPairPart2(input);
+       
+
+        public static bool HasRepeatWithOneInbetweenPart2(string input)
+        {
+            bool hasRepeatWithOneInbetween = false;
+            for (int i = 0; i < input.Length - 2; i++)
+            {
+                if (input[i] == input[i + 2])
+                {
+                    hasRepeatWithOneInbetween = true;
+                    break;
+                }
+            }
+            return hasRepeatWithOneInbetween;
+        }
+
+        public static bool HasNonOverlapPairPart2(string input)
+        {
+            bool hasNonOverlapPair = false;
+            string subString;
+            for (int i = 0; i < input.Length - 1; i++)
+            {
+                subString = input.Substring(i, 2);
+                for (int j = i + 2; j < input.Length - 1; j++)
+                {
+                    if (input[j] == subString[0] && input[j + 1] == subString[1] && i + 1 != j)
+                    {
+                        hasNonOverlapPair = true;
+                        break;
+                    }
+                }
+            }
+            return hasNonOverlapPair;
         }
     }
 }
