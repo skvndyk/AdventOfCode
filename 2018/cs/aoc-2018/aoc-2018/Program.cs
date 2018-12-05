@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace aoc_2018
+namespace Day1
 {
     public class Program
     {
@@ -13,21 +13,37 @@ namespace aoc_2018
         static void Main(string[] args)
         {
             string filePath = "day1-2018.txt";
-            Console.WriteLine($"Part 1: {Part1(filePath)}");
-            //Console.WriteLine($"Part 2: {Part2(filePath)}");
+            List<int> lines = ReadTextIntoLines(filePath);
+            Console.WriteLine($"Part 1: {Part1(lines)}");
+            Console.WriteLine($"Part 2: {Part2(lines)}");
             Console.ReadLine();
 
         }
 
-        public static int Part1(string filePath)
+        public static int Part1(List<int> lines)
         {
-            List<int> input = ReadTextIntoLines(filePath);
-            return input.Sum();
+            return lines.Sum();
         }
 
-        public static int Part2(string input)
+        public static int Part2(List<int> lines)
         {
-            throw new NotImplementedException();
+            List<int> freqsSeen = new List<int>();
+            int currFreq = 0;
+            int idx = 0;
+            do
+            {
+                if (idx < lines.Count)
+                {
+                    freqsSeen.Add(currFreq);
+                    currFreq += lines[idx];
+                    
+                    idx++;
+                }
+                else { idx = 0; }
+
+            } while (!freqsSeen.Contains(currFreq));
+           
+            return currFreq;
         }
 
         public static List<int> ReadTextIntoLines(string filePath)
