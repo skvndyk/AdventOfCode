@@ -51,21 +51,30 @@ namespace Day2
         public static int Part2(List<string> boxIds)
         {
             int oneOffsFound = 0;
+            string firstMatch = "";
+            string secondMatch = "";
+            List<char> matchingChars = new List<char>();
+            List<int> matchingIdxs = new List<int>();
             for (int i = 0; i < boxIds.Count - 1; i++)
             {
                 for (int j = i + 1; j < boxIds.Count - 2; j++)
                 {
-                    int matchingChars = 0;
+                    matchingChars = new List<char>();
+                    matchingIdxs = new List<int>();
+                    
                     for (int k = 0; k < boxIds[i].Length; k++)
                     {
                         if (boxIds[i][k] == boxIds[j][k])
                         {
-                            matchingChars++;
+                            matchingChars.Add(boxIds[i][k]);
+                            matchingIdxs.Add(k);
                         }
                     }
-                    if (matchingChars == boxIds[i].Length - 1)
+                    if (matchingChars.Count == boxIds[i].Length - 1)
                     {
-                        oneOffsFound++;
+                        firstMatch = boxIds[i];
+                        secondMatch = boxIds[j];
+                        break;
                     }
                 }
             }
