@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Day2
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
             string filePath = "day2-2018.txt";
             List<string> boxIds = ReadTextIntoLines(filePath);
-            Console.WriteLine($"Part 1: {Part1(boxIds)}");
-            //Console.WriteLine($"Part 2: {Part2(boxIds)}");
+            //Console.WriteLine($"Part 1: {Part1(boxIds)}");
+            Console.WriteLine($"Part 2: {Part2(boxIds)}");
             Console.ReadLine();
         }
 
@@ -50,7 +50,26 @@ namespace Day2
 
         public static int Part2(List<string> boxIds)
         {
-            throw new NotImplementedException();
+            int oneOffsFound = 0;
+            for (int i = 0; i < boxIds.Count - 1; i++)
+            {
+                for (int j = i + 1; j < boxIds.Count - 2; j++)
+                {
+                    int matchingChars = 0;
+                    for (int k = 0; k < boxIds[i].Length; k++)
+                    {
+                        if (boxIds[i][k] == boxIds[j][k])
+                        {
+                            matchingChars++;
+                        }
+                    }
+                    if (matchingChars == boxIds[i].Length - 1)
+                    {
+                        oneOffsFound++;
+                    }
+                }
+            }
+            return oneOffsFound;
         }
 
         public static List<string> ReadTextIntoLines(string filePath)
