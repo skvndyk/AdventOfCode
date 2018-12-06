@@ -9,7 +9,7 @@ namespace Day4
 {
     class Program
     {
-        public static readonly Regex _rgx = new Regex($@"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] (((Guard #(\d+)) (?:begins shift))| (falls asleep)| (wakes up))");
+        public static readonly Regex _rgx = new Regex($@"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] (((Guard #(\d+)) (?:begins shift))|(falls asleep)|(wakes up))");
         static void Main(string[] args)
         {
             string filePath = "day4-2018.txt";
