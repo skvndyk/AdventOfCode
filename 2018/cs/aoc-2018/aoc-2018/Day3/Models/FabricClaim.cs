@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Day3.Models;
 
 namespace Day3
 {
@@ -11,9 +12,9 @@ namespace Day3
             Width = width;
             Height = height;
             UpperLeft = new Coord(x, y);
-            UpperRight = new Coord(x + Width, y);
-            LowerLeft = new Coord(x, y + Height);
-            LowerRight = new Coord(x + Width, y + Height);
+            UpperRight = new Coord(x + Width - 1, y);
+            LowerLeft = new Coord(x, y + Height - 1);
+            LowerRight = new Coord(x + Width - 1, y + Height - 1);
 
         }
         public string Id { get; set; }
@@ -39,23 +40,14 @@ namespace Day3
 
         public void SetCoordsCovered()
         {
-
             _CoordsCovered = new List<Coord>();
-            for (int h = UpperLeft.X; h <= UpperRight.X; h++)
+            //get all coords covered by rectangle
+           for (int x = UpperLeft.X; x <= UpperRight.X; x++)
             {
-                //top
-                _CoordsCovered.Add(new Coord(h, UpperLeft.Y));
-                //bottom
-                _CoordsCovered.Add(new Coord(h, LowerLeft.Y));
-            }
-
-            //get coords along left and right of claim
-            for (int v = UpperLeft.Y; v <= LowerLeft.Y; v++)
-            {
-                //left
-                _CoordsCovered.Add(new Coord(UpperLeft.X, v));
-                //right
-                _CoordsCovered.Add(new Coord(UpperRight.X, v));
+                for (int y = UpperLeft.Y; y <= LowerLeft.Y; y++)
+                {
+                    _CoordsCovered.Add(new Coord(x,y));
+                }
             }
         }
     }

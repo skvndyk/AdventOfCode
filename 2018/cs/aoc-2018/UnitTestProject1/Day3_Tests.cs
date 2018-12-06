@@ -12,7 +12,7 @@ namespace UnitTestProject1
         [TestMethod]
         public void Part1_T1()
         {
-            string filePath = "day3-2018.txt";
+            string filePath = "day3-2018-test.txt";
             List<FabricClaim> claims = Program.ParseInput(filePath);
             Assert.AreEqual(4, Program.Part1(claims));
         }   

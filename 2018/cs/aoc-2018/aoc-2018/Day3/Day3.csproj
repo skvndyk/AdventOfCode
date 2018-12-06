@@ -45,7 +45,7 @@
     <Compile Include="Models\Coord.cs" />
     <Compile Include="Models\FabricClaim.cs" />
     <Compile Include="Models\Grid.cs" />
-    <Compile Include="Models\Program.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

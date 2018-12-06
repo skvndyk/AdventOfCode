@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Day3.Models;
 
 namespace Day3
 {
@@ -15,7 +16,7 @@ namespace Day3
         {
             string filePath = "day3-2018.txt";
             List<FabricClaim> claims = ParseInput(filePath);
-            //Console.WriteLine($"Part 1: {Part1(lines)}");
+            Console.WriteLine($"Part 1: {Part1(claims)}");
             //Console.WriteLine($"Part 2: {Part2(lines)}");
             Console.ReadLine();
 
@@ -23,7 +24,22 @@ namespace Day3
 
         public static int Part1(List<FabricClaim> claims)
         {
-            throw new NotImplementedException();
+            Dictionary<Coord, int> seenCoordDict = new Dictionary<Coord, int>();
+            foreach (FabricClaim claim in claims)
+            {
+                foreach (Coord coord in claim.CoordsCovered)
+                {
+                    if (seenCoordDict.TryGetValue(coord, out int val))
+                    {
+                        seenCoordDict[coord] += 1;
+                    }
+                    else
+                    {
+                        seenCoordDict[coord] = 1;
+                    }
+                }
+            }
+            return seenCoordDict.Count(d => d.Value > 1);
         }
 
         public static int Part2(List<FabricClaim> claims)
