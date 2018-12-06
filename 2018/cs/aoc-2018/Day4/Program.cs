@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Day4
 {
-    class Program
+    public class Program
     {
         public static readonly Regex _rgx = new Regex($@"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] (((Guard #(\d+)) (?:begins shift))|(falls asleep)|(wakes up))");
         static void Main(string[] args)
@@ -37,6 +37,14 @@ namespace Day4
 
         public static List<LogEntry> ConvertLinesToSortedLogEntries(List<string> lines)
         {
+            List<LogEntry> entries = new List<LogEntry>();
+            foreach (string line in lines)
+            {
+                Match match = _rgx.Match(line);
+                if (!match.Success) throw new Exception($@"could not parse line with contents {line}");
+                GroupCollection groups = match.Groups;
+
+            }
             throw new NotImplementedException();
         }
 
