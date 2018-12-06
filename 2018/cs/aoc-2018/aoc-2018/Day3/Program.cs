@@ -16,13 +16,35 @@ namespace Day3
         {
             string filePath = "day3-2018.txt";
             List<FabricClaim> claims = ParseInput(filePath);
-            Console.WriteLine($"Part 1: {Part1(claims)}");
-            //Console.WriteLine($"Part 2: {Part2(lines)}");
+            //Console.WriteLine($"Part 1: {Part1(claims)}");
+            Console.WriteLine($"Part 2: {Part2(claims)}");
             Console.ReadLine();
 
         }
 
         public static int Part1(List<FabricClaim> claims)
+        {
+            Dictionary<Coord, int> seenCoordDict = GetAllSeenCoords(claims);
+            return seenCoordDict.Count(d => d.Value > 1);
+        }
+
+        public static string Part2(List<FabricClaim> claims)
+        {
+            Dictionary<Coord, int> seenCoordDict = GetAllSeenCoords(claims);
+
+            //could reduce to some linq craziness
+            foreach (FabricClaim fabricClaim in claims)
+            {
+                int overlaps = fabricClaim.CoordsCovered.Count(coord => seenCoordDict[coord] > 1);
+                if (overlaps == 0)
+                {
+                    return fabricClaim.Id;
+                }
+            }
+            return null;
+        }
+
+        public static Dictionary<Coord, int> GetAllSeenCoords(List<FabricClaim> claims)
         {
             Dictionary<Coord, int> seenCoordDict = new Dictionary<Coord, int>();
             foreach (FabricClaim claim in claims)
@@ -39,13 +61,10 @@ namespace Day3
                     }
                 }
             }
-            return seenCoordDict.Count(d => d.Value > 1);
+            return seenCoordDict;
         }
 
-        public static int Part2(List<FabricClaim> claims)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public static List<FabricClaim> ParseInput(string filePath)
         {
