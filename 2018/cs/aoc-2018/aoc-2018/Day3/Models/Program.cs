@@ -21,12 +21,12 @@ namespace Day3
 
         }
 
-        public static int Part1(List<int> lines)
+        public static int Part1(List<FabricClaim> claims)
         {
             throw new NotImplementedException();
         }
 
-        public static int Part2(List<int> lines)
+        public static int Part2(List<FabricClaim> claims)
         {
             throw new NotImplementedException();
         }
@@ -51,14 +51,8 @@ namespace Day3
             Match match = _rgx.Match(line);
             if (!match.Success) throw new Exception($@"could not parse line with contents {line}");
             GroupCollection groups = match.Groups;
-            return new FabricClaim()
-            {
-                Id = groups[0].Value,
-                X = int.Parse(groups[1].Value),
-                Y = int.Parse(groups[2].Value),
-                Height = int.Parse(groups[3].Value),
-                Width = int.Parse(groups[4].Value),
-            };
+            return new FabricClaim(groups[1].Value, int.Parse(groups[2].Value), 
+                int.Parse(groups[3].Value), int.Parse(groups[4].Value), int.Parse(groups[5].Value));
         }
     }
 }

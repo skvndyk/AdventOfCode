@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Day2;
+using Day3;
 
 namespace UnitTestProject1
 {
@@ -10,9 +10,11 @@ namespace UnitTestProject1
     {
 
         [TestMethod]
-        public void Test1()
+        public void Part1_T1()
         {
-            
+            string filePath = "day3-2018.txt";
+            List<FabricClaim> claims = Program.ParseInput(filePath);
+            Assert.AreEqual(4, Program.Part1(claims));
         }   
     }
 }
