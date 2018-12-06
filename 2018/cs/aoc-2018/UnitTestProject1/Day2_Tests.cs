@@ -14,7 +14,7 @@ namespace UnitTestProject1
         {
             string filePath = "day2-2018-test.txt";
             List<string> lines = Day2.Program.ReadTextIntoLines(filePath);
-            Assert.AreEqual(Program.Part2(lines), 1);
+            Assert.AreEqual(Program.Part2(lines), "fgij");
         }   
     }
 }

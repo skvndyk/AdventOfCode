@@ -12,7 +12,7 @@ namespace Day2
         {
             string filePath = "day2-2018.txt";
             List<string> boxIds = ReadTextIntoLines(filePath);
-            //Console.WriteLine($"Part 1: {Part1(boxIds)}");
+            Console.WriteLine($"Part 1: {Part1(boxIds)}");
             Console.WriteLine($"Part 2: {Part2(boxIds)}");
             Console.ReadLine();
         }
@@ -48,37 +48,34 @@ namespace Day2
             return appearsTwice * appearsThrice;
         }
 
-        public static int Part2(List<string> boxIds)
+        public static string Part2(List<string> boxIds)
         {
-            int oneOffsFound = 0;
-            string firstMatch = "";
-            string secondMatch = "";
-            List<char> matchingChars = new List<char>();
-            List<int> matchingIdxs = new List<int>();
-            for (int i = 0; i < boxIds.Count - 1; i++)
+            int idCharLength = boxIds[0].Length;
+         
+            for (int i = 0; i < boxIds.Count - 2; i++)
             {
-                for (int j = i + 1; j < boxIds.Count - 2; j++)
+                for (int j = i + 1; j < boxIds.Count - 1; j++)
                 {
-                    matchingChars = new List<char>();
-                    matchingIdxs = new List<int>();
-                    
-                    for (int k = 0; k < boxIds[i].Length; k++)
+                    Dictionary<char, int> matchCharIdxDict = new Dictionary<char, int>();
+
+                    for (int k = 0; k < idCharLength; k++)
                     {
                         if (boxIds[i][k] == boxIds[j][k])
                         {
-                            matchingChars.Add(boxIds[i][k]);
-                            matchingIdxs.Add(k);
+                            matchCharIdxDict[boxIds[i][k]] = k;
+                        }
+                        if (k > matchCharIdxDict.Count + 1)
+                        {
+                            break;
                         }
                     }
-                    if (matchingChars.Count == boxIds[i].Length - 1)
+                    if (matchCharIdxDict.Count == idCharLength - 1)
                     {
-                        firstMatch = boxIds[i];
-                        secondMatch = boxIds[j];
-                        break;
+                        return string.Concat(matchCharIdxDict.OrderBy(x => x.Value).Select(p => p.Key));
                     }
                 }
             }
-            return oneOffsFound;
+            return null;
         }
 
         public static List<string> ReadTextIntoLines(string filePath)
