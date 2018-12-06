@@ -65,6 +65,14 @@
       <Project>{23595d29-567f-4975-a793-00ef3474685e}</Project>
       <Name>Day2</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Day3\Day3.csproj">
+      <Project>{fdab6efa-b40b-41de-b442-ff2eef9e892c}</Project>
+      <Name>Day3</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Day4\Day4.csproj">
+      <Project>{278fb0ef-10c6-4663-af98-f507efb4778d}</Project>
+      <Name>Day4</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="day2-2018-test.txt">

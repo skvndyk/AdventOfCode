@@ -65,7 +65,7 @@ namespace Day2
                             matchCharIdxDict[k] = boxIds[i][k];
                         }
                     }
-                
+
                     if (matchCharIdxDict.Count == idCharLength - 1)
                     {
                         return string.Concat(matchCharIdxDict.OrderBy(x => x.Key).Select(p => p.Value));
@@ -76,10 +76,10 @@ namespace Day2
             return null;
         }
 
-    public static List<string> ReadTextIntoLines(string filePath)
-    {
-        string rawInput = System.IO.File.ReadAllText(filePath);
-        return rawInput.Split('\n').ToList();
+        public static List<string> ReadTextIntoLines(string filePath)
+        {
+            string rawInput = System.IO.File.ReadAllText(filePath);
+            return rawInput.Split('\n').ToList();
+        }
     }
-}
 }
