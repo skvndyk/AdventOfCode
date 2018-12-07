@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,7 +10,8 @@ namespace Day4
 {
     public class Program
     {
-        public static readonly Regex _rgx = new Regex($@"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] (((Guard #(\d+)) (?:begins shift))|(falls asleep)|(wakes up))");
+        public static readonly Regex _logRgx = new Regex(@"\[(?<datetime>\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] ((Guard #(?<guardId>\d+)) (?<begin>begins shift)|(?<sleep>falls asleep)|(?<wake>wakes up))");
+        public static readonly Regex _dtRgx = new Regex(@"\[((\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}))\]");
         static void Main(string[] args)
         {
             string filePath = "day4-2018.txt";
@@ -40,14 +42,31 @@ namespace Day4
             List<LogEntry> entries = new List<LogEntry>();
             foreach (string line in lines)
             {
-                Match match = _rgx.Match(line);
+                Match match = _logRgx.Match(line);
                 if (!match.Success) throw new Exception($@"could not parse line with contents {line}");
                 GroupCollection groups = match.Groups;
+                DateTime dateTime = ParseDateTimeFromLogEntry(groups["datetime"].Value);
+                GuardObservation guardObservation = new GuardObservation();
+                if (!string.IsNullOrEmpty(groups["guardId"].Value))
+                {
+                    guardObservation.GuardId = groups["guardId"].Value;
+                }
+                guardObservation.Action
+                
+                
 
             }
             throw new NotImplementedException();
         }
 
+        public static DateTime ParseDateTimeFromLogEntry(string dateTime)
+        {
+            Match match = _dtRgx.Match(dateTime);
+            if (!match.Success) throw new Exception($@"could not parse datetime string {dateTime}");
+            GroupCollection groups = match.Groups;
+            return new DateTime(int.Parse(groups[1].ToString()), int.Parse(groups[2].ToString()), int.Parse(groups[3].ToString()), int.Parse(groups[4].ToString()), int.Parse(groups[5].ToString()), 0);
+
+        }
         public static List<string> ReadTextIntoLines(string filePath)
         {
             string rawInput = System.IO.File.ReadAllText(filePath);
