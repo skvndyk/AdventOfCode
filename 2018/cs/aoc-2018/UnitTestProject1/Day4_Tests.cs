@@ -13,8 +13,9 @@ namespace UnitTestProject1
         public void Part1_T1()
         {
             string filePath = "day4-2018-test.txt";
-            List<LogEntry> logEntries = Program.ParseFileIntoLogEntries(filePath);
-            int y = 4;
+
+            Program.Part1(filePath);
+
         }   
     }
 }

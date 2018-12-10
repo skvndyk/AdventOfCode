@@ -11,6 +11,7 @@ namespace Day4
     {
         public DateTime DateTime { get; set; }
         public int MinuteValue => DateTime.Minute;
+        public GuardObservation GuardObservation { get; set; }
     }
 
 }

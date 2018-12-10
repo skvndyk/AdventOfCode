@@ -10,23 +10,25 @@ namespace Day4
 {
     public class Program
     {
-        public static readonly Regex _logRgx = new Regex(@"\[(?<datetime>\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] ((Guard #(?<guardId>\d+)) (?<begin>begins shift)|(?<sleep>falls asleep)|(?<wake>wakes up))");
-        public static readonly Regex _dtRgx = new Regex(@"\[((\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}))\]");
+        public static readonly Regex _logRgx = new Regex(@"\[(?<datetime>\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] ((?<namedGuard>(Guard #(?<guardId>\d+)) (begins shift))|(?<sleeps>falls asleep)|(?<wakes>wakes up))");
+        public static readonly Regex _dtRgx = new Regex(@"(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2}) (?<hour>\d{2}):(?<minute>\d{2})");
         static void Main(string[] args)
         {
             string filePath = "day4-2018.txt";
-            List<LogEntry> logEntries = ParseFileIntoLogEntries(filePath);
-            Console.WriteLine($"Part 1: {Part1(logEntries)}");
-            Console.WriteLine($"Part 2: {Part2(logEntries)}");
+            Console.WriteLine($"Part 1: {Part1(filePath)}");
+            Console.WriteLine($"Part 2: {Part2(filePath)}");
             Console.ReadLine();
         }
 
-        public static int Part1(List<LogEntry> logEntries)
+        public static int Part1(string filePath)
         {
+            List<LogEntry> logEntries = ParseFileIntoLogEntries(filePath);
+            List<LogEntry> sortedEntries = logEntries.OrderBy(e => e.DateTime).ToList();
+            //todo need to get guardid for non labelled entries
             throw new NotImplementedException();
         }
 
-        public static string Part2(List<LogEntry> logEntries)
+        public static string Part2(string filePath)
         {
             throw new NotImplementedException();
         }
@@ -39,34 +41,48 @@ namespace Day4
 
         public static List<LogEntry> ConvertLinesToSortedLogEntries(List<string> lines)
         {
-            List<LogEntry> entries = new List<LogEntry>();
-            foreach (string line in lines)
-            {
-                Match match = _logRgx.Match(line);
-                if (!match.Success) throw new Exception($@"could not parse line with contents {line}");
-                GroupCollection groups = match.Groups;
-                DateTime dateTime = ParseDateTimeFromLogEntry(groups["datetime"].Value);
-                GuardObservation guardObservation = new GuardObservation();
-                if (!string.IsNullOrEmpty(groups["guardId"].Value))
-                {
-                    guardObservation.GuardId = groups["guardId"].Value;
-                }
-                guardObservation.Action
-                
-                
-
-            }
-            throw new NotImplementedException();
+            return lines.Select(ConvertLineToLogEntry).ToList();
         }
 
+        public static LogEntry ConvertLineToLogEntry(string line)
+        {
+            Match match = _logRgx.Match(line);
+            if (!match.Success) throw new Exception($@"could not parse line with contents {line}");
+            GroupCollection groups = match.Groups;
+            DateTime dateTime = ParseDateTimeFromLogEntry(groups["datetime"].Value);
+            GuardObservation guardObservation = new GuardObservation();
+            if (!string.IsNullOrEmpty(groups["namedGuard"].Value))
+            {
+                guardObservation.GuardId = groups["guardId"].Value;
+                guardObservation.Action = GuardObservation.GuardAction.BeginsShift;
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(groups["sleeps"].Value))
+                {
+                    guardObservation.Action = GuardObservation.GuardAction.FallsAsleep;
+                }
+                else if (!string.IsNullOrEmpty(groups["wakes"].Value))
+                {
+                    guardObservation.Action = GuardObservation.GuardAction.WakesUp;
+                }
+                else
+                {
+                    throw new Exception("Couldn't find a valid guard action");
+
+                }
+            }
+            return new LogEntry(){DateTime = dateTime, GuardObservation = guardObservation};
+        }
         public static DateTime ParseDateTimeFromLogEntry(string dateTime)
         {
             Match match = _dtRgx.Match(dateTime);
             if (!match.Success) throw new Exception($@"could not parse datetime string {dateTime}");
             GroupCollection groups = match.Groups;
-            return new DateTime(int.Parse(groups[1].ToString()), int.Parse(groups[2].ToString()), int.Parse(groups[3].ToString()), int.Parse(groups[4].ToString()), int.Parse(groups[5].ToString()), 0);
+            return new DateTime(int.Parse(groups["year"].Value), int.Parse(groups["month"].Value), int.Parse(groups["day"].Value), int.Parse(groups["hour"].Value), int.Parse(groups["minute"].Value), 0);
 
         }
+
         public static List<string> ReadTextIntoLines(string filePath)
         {
             string rawInput = System.IO.File.ReadAllText(filePath);
