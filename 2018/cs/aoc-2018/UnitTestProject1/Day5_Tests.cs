@@ -52,7 +52,8 @@ namespace UnitTestProject1
         [TestMethod]
         public void Part2_T1()
         {
-          
+            string input = "dabAcCaCBAcCcaDA";
+            Assert.AreEqual(4, Program.Part2(input));
 
         }
     }
