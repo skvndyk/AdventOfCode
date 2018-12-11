@@ -24,13 +24,62 @@ namespace Day4
         {
             List<LogEntry> logEntries = ParseFileIntoLogEntries(filePath);
             List<LogEntry> sortedEntries = logEntries.OrderBy(e => e.DateTime).ToList();
-            //todo need to get guardid for non labelled entries
+            List<LogEntry> linkedEntries = CreateLinkedListFromEntries(sortedEntries);
+            List<LogEntry> completeEntryList = SetGuardIds(linkedEntries);
+            string sleepiestGuardId = GetSleepiestGuard(completeEntryList);
+            //todo what minute does that guard spend asleep the most?
             throw new NotImplementedException();
         }
 
         public static string Part2(string filePath)
         {
             throw new NotImplementedException();
+        }
+
+        public static string GetSleepiestGuard(List<LogEntry> logEntries)
+        {
+            Dictionary<string, int> sleepingTimesDict = new Dictionary<string, int>();
+            foreach (LogEntry entry in logEntries)
+            {
+                if (entry.GuardObservation.Action == GuardObservation.GuardAction.FallsAsleep)
+                {
+                    if (entry.NextEntry.GuardObservation.Action == GuardObservation.GuardAction.WakesUp)
+                    {
+                        string id = entry.GuardObservation.GuardId;
+                        int sleepTime = entry.NextEntry.MinuteValue - entry.MinuteValue;
+                        if (sleepingTimesDict.TryGetValue(id, out int val))
+                        {
+                            sleepingTimesDict[id] += sleepTime;
+                        }
+                        else { sleepingTimesDict[id] = sleepTime; }
+                    }
+                    else { throw new Exception("Expected next entry to be of type WakesUp");}
+                    
+
+                }
+            }
+            return sleepingTimesDict.FirstOrDefault(t => t.Value == sleepingTimesDict.Max(d => d.Value)).Key;
+        }
+
+       
+        public static List<LogEntry> SetGuardIds(List<LogEntry> logEntries)
+        {
+            foreach (LogEntry entry in logEntries)
+            {
+                entry.GuardObservation.GuardId = ReturnMatchingGuardId(entry);
+            }
+            return logEntries;
+        }
+
+        public static string ReturnMatchingGuardId(LogEntry entry)
+        {
+            LogEntry currEntry = entry;
+            while (string.IsNullOrEmpty(currEntry.GuardObservation.GuardId))
+            {
+                currEntry = currEntry.PreviousEntry;
+                ReturnMatchingGuardId(currEntry);
+            }
+            return currEntry.GuardObservation.GuardId;
         }
 
         public static List<LogEntry> ParseFileIntoLogEntries(string filePath)
@@ -42,6 +91,21 @@ namespace Day4
         public static List<LogEntry> ConvertLinesToSortedLogEntries(List<string> lines)
         {
             return lines.Select(ConvertLineToLogEntry).ToList();
+        }
+
+        public static List<LogEntry> CreateLinkedListFromEntries(List<LogEntry> entries)
+        {
+            for (int i = 0; i < entries.Count; i++)
+            {
+                entries[i].NextEntry = i == entries.Count - 1 ? null : entries[i + 1];
+                entries[i].PreviousEntry = i == 0 ? null : entries[i - 1];
+            }
+            return entries;
+        }
+
+        public static List<LogEntry> AddGuardIdIfNeeded(LogEntry entry, List<LogEntry> entries)
+        {
+            throw new NotImplementedException();
         }
 
         public static LogEntry ConvertLineToLogEntry(string line)
