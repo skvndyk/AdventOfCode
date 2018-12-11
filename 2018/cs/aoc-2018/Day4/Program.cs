@@ -16,7 +16,7 @@ namespace Day4
         {
             string filePath = "day4-2018.txt";
             Console.WriteLine($"Part 1: {Part1(filePath)}");
-            //Console.WriteLine($"Part 2: {Part2(filePath)}");
+            Console.WriteLine($"Part 2: {Part2(filePath)}");
             Console.ReadLine();
         }
 
@@ -30,12 +30,50 @@ namespace Day4
             return sleepiestGuardId;
         }
 
-        public static string Part2(string filePath)
+        public static int Part2(string filePath)
         {
-            throw new NotImplementedException();
+            List<LogEntry> logEntries = ParseFileIntoLogEntries(filePath);
+            List<LogEntry> sortedEntries = logEntries.OrderBy(e => e.DateTime).ToList();
+            List<LogEntry> linkedEntries = CreateLinkedListFromEntries(sortedEntries);
+            List<LogEntry> completeEntryList = SetGuardIds(linkedEntries);
+            HashSet<GuardSleepSummary> guardSleepSummaries = GetSleepySummaries(logEntries);
+            return GetAllTimeSleepiestMinuteCode(guardSleepSummaries);
         }
 
+        public static int GetAllTimeSleepiestMinuteCode(HashSet<GuardSleepSummary> guardSleepSummaries)
+        {
+            GuardSleepSummary sleepiestGuardSleepSummary = new GuardSleepSummary();
+            //get the maxest of possible values
+            int maxVal = 0;
+            int maxKey = 0;
+            foreach (GuardSleepSummary guardSleepSummary in guardSleepSummaries)
+            {
+                KeyValuePair<int, int> kvp = guardSleepSummary.GetSleepiestMinuteKVP();
+                if (kvp.Value > maxVal)
+                {
+                    maxVal = kvp.Value;
+                    maxKey = kvp.Key;
+                    sleepiestGuardSleepSummary = guardSleepSummary;
+                }
+            }
+            return int.Parse(sleepiestGuardSleepSummary.GuardId) * maxKey;
+
+        }
         public static int GetSleepiestGuardCode(List<LogEntry> logEntries)
+        {
+            HashSet<GuardSleepSummary> guardSleepSummaries = GetSleepySummaries(logEntries);
+            string sleepiestGuard = guardSleepSummaries
+                .FirstOrDefault(s1 => s1.TotalSleepTime == guardSleepSummaries.Max(s2 => s2.TotalSleepTime))
+                .GuardId;
+            int maxValue = guardSleepSummaries.FirstOrDefault(g => g.GuardId == sleepiestGuard).SleepyTimesDictionary
+                .Max(kvp => kvp.Value);
+            int sleepiestMinute = guardSleepSummaries.FirstOrDefault(g => g.GuardId == sleepiestGuard)
+                .SleepyTimesDictionary.First(kvp => kvp.Value == maxValue).Key;
+            return int.Parse(sleepiestGuard) * sleepiestMinute;
+
+        }
+
+        public static HashSet<GuardSleepSummary> GetSleepySummaries(List<LogEntry> logEntries)
         {
             Dictionary<string, int> sleepingTimesDict = new Dictionary<string, int>();
             HashSet<GuardSleepSummary> guardSleepSummaries = new HashSet<GuardSleepSummary>();
@@ -73,18 +111,8 @@ namespace Day4
                     else { throw new Exception("Expected next entry to be of type WakesUp"); }
                 }
             }
-            string sleepiestGuard = guardSleepSummaries
-                .FirstOrDefault(s1 => s1.TotalSleepTime == guardSleepSummaries.Max(s2 => s2.TotalSleepTime))
-                .GuardId;
-            int maxValue = guardSleepSummaries.FirstOrDefault(g => g.GuardId == sleepiestGuard).SleepyTimesDictionary
-                .Max(kvp => kvp.Value);
-            int sleepiestMinute = guardSleepSummaries.FirstOrDefault(g => g.GuardId == sleepiestGuard)
-                .SleepyTimesDictionary.First(kvp => kvp.Value == maxValue).Key;
-            return int.Parse(sleepiestGuard) * sleepiestMinute;
-
+            return guardSleepSummaries;
         }
-
-
 
         public static List<int> GetSleepyMinuteRange(LogEntry sleepEntry, int sleepSpan)
         {

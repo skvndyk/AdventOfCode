@@ -15,6 +15,14 @@ namespace UnitTestProject1
             string filePath = "day4-2018-test.txt";
             Assert.AreEqual(Program.Part1(filePath), 240);
 
-        }   
+        }
+
+        [TestMethod]
+        public void Part2_T1()
+        {
+            string filePath = "day4-2018-test.txt";
+            Assert.AreEqual(Program.Part2(filePath), 4455);
+
+        }
     }
 }
