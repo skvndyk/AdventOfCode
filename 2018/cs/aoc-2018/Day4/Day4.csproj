@@ -42,7 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DictionaryExtension.cs" />
     <Compile Include="GuardObservation.cs" />
+    <Compile Include="GuardSleepSummary.cs" />
     <Compile Include="LogEntry.cs" />
     <Compile Include="LogEntryList.cs" />
     <Compile Include="Program.cs" />

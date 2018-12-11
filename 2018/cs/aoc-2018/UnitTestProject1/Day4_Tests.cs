@@ -13,8 +13,7 @@ namespace UnitTestProject1
         public void Part1_T1()
         {
             string filePath = "day4-2018-test.txt";
-
-            Program.Part1(filePath);
+            Assert.AreEqual(Program.Part1(filePath), 240);
 
         }   
     }

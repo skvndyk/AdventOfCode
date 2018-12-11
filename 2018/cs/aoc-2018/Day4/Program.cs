@@ -16,7 +16,7 @@ namespace Day4
         {
             string filePath = "day4-2018.txt";
             Console.WriteLine($"Part 1: {Part1(filePath)}");
-            Console.WriteLine($"Part 2: {Part2(filePath)}");
+            //Console.WriteLine($"Part 2: {Part2(filePath)}");
             Console.ReadLine();
         }
 
@@ -26,9 +26,8 @@ namespace Day4
             List<LogEntry> sortedEntries = logEntries.OrderBy(e => e.DateTime).ToList();
             List<LogEntry> linkedEntries = CreateLinkedListFromEntries(sortedEntries);
             List<LogEntry> completeEntryList = SetGuardIds(linkedEntries);
-            string sleepiestGuardId = GetSleepiestGuard(completeEntryList);
-            //todo what minute does that guard spend asleep the most?
-            throw new NotImplementedException();
+            int sleepiestGuardId = GetSleepiestGuardCode(completeEntryList);
+            return sleepiestGuardId;
         }
 
         public static string Part2(string filePath)
@@ -36,9 +35,11 @@ namespace Day4
             throw new NotImplementedException();
         }
 
-        public static string GetSleepiestGuard(List<LogEntry> logEntries)
+        public static int GetSleepiestGuardCode(List<LogEntry> logEntries)
         {
             Dictionary<string, int> sleepingTimesDict = new Dictionary<string, int>();
+            HashSet<GuardSleepSummary> guardSleepSummaries = new HashSet<GuardSleepSummary>();
+            GuardSleepSummary sleepSummary = new GuardSleepSummary();
             foreach (LogEntry entry in logEntries)
             {
                 if (entry.GuardObservation.Action == GuardObservation.GuardAction.FallsAsleep)
@@ -46,22 +47,52 @@ namespace Day4
                     if (entry.NextEntry.GuardObservation.Action == GuardObservation.GuardAction.WakesUp)
                     {
                         string id = entry.GuardObservation.GuardId;
-                        int sleepTime = entry.NextEntry.MinuteValue - entry.MinuteValue;
-                        if (sleepingTimesDict.TryGetValue(id, out int val))
-                        {
-                            sleepingTimesDict[id] += sleepTime;
-                        }
-                        else { sleepingTimesDict[id] = sleepTime; }
-                    }
-                    else { throw new Exception("Expected next entry to be of type WakesUp");}
-                    
+                        int guardSleepSpan = entry.NextEntry.MinuteValue - entry.MinuteValue;
+                        sleepingTimesDict.AddOrUpdate(id, guardSleepSpan);
+                        GuardSleepSummary currSleepSummary = new GuardSleepSummary();
 
+                        if (guardSleepSummaries.Count(s => s.GuardId == id) == 1)
+                        {
+                            currSleepSummary = guardSleepSummaries.FirstOrDefault(s => s.GuardId == id);
+                        }
+                        else
+                        {
+                            currSleepSummary = new GuardSleepSummary() { GuardId = id };
+                            guardSleepSummaries.Add(currSleepSummary);
+                        }
+
+                        currSleepSummary.TotalSleepTime += guardSleepSpan;
+                        List<int> ints = GetSleepyMinuteRange(entry, guardSleepSpan);
+                        foreach (int i in ints)
+                        {
+                            currSleepSummary.SleepyTimesDictionary.AddOrUpdate(i);
+                        }
+
+
+                    }
+                    else { throw new Exception("Expected next entry to be of type WakesUp"); }
                 }
             }
-            return sleepingTimesDict.FirstOrDefault(t => t.Value == sleepingTimesDict.Max(d => d.Value)).Key;
+            string sleepiestGuard = guardSleepSummaries
+                .FirstOrDefault(s1 => s1.TotalSleepTime == guardSleepSummaries.Max(s2 => s2.TotalSleepTime))
+                .GuardId;
+            int maxValue = guardSleepSummaries.FirstOrDefault(g => g.GuardId == sleepiestGuard).SleepyTimesDictionary
+                .Max(kvp => kvp.Value);
+            int sleepiestMinute = guardSleepSummaries.FirstOrDefault(g => g.GuardId == sleepiestGuard)
+                .SleepyTimesDictionary.First(kvp => kvp.Value == maxValue).Key;
+            return int.Parse(sleepiestGuard) * sleepiestMinute;
+
         }
 
-       
+
+
+        public static List<int> GetSleepyMinuteRange(LogEntry sleepEntry, int sleepSpan)
+        {
+            List<int> sleepyTimes = new List<int>();
+            sleepyTimes.AddRange(Enumerable.Range(sleepEntry.MinuteValue, sleepSpan));
+            return sleepyTimes.ToList();
+        }
+
         public static List<LogEntry> SetGuardIds(List<LogEntry> logEntries)
         {
             foreach (LogEntry entry in logEntries)
@@ -136,7 +167,7 @@ namespace Day4
 
                 }
             }
-            return new LogEntry(){DateTime = dateTime, GuardObservation = guardObservation};
+            return new LogEntry() { DateTime = dateTime, GuardObservation = guardObservation };
         }
         public static DateTime ParseDateTimeFromLogEntry(string dateTime)
         {

@@ -15,6 +15,7 @@ namespace Day4
 
         public string GuardId { get; set; }
         public GuardAction Action { get; set; }
+        public Dictionary<int, int> SleepyDict { get; set; } = new Dictionary<int, int>();
     }
 
 }
