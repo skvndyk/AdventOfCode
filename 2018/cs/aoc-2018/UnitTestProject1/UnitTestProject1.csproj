@@ -48,6 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Day6_Tests.cs" />
     <Compile Include="Day5_Tests.cs" />
     <Compile Include="Day4_Tests.cs" />
     <Compile Include="Day3_Tests.cs" />
@@ -62,6 +63,10 @@
     <ProjectReference Include="..\aoc-2018\Day1.csproj">
       <Project>{9de87096-abb3-41dc-b261-548e4f25da56}</Project>
       <Name>Day1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\aoc-2018\Day6\Day6.csproj">
+      <Project>{c452da0b-de7f-4b9c-81c0-1f19e909bff5}</Project>
+      <Name>Day6</Name>
     </ProjectReference>
     <ProjectReference Include="..\Day2\Day2.csproj">
       <Project>{23595d29-567f-4975-a793-00ef3474685e}</Project>
