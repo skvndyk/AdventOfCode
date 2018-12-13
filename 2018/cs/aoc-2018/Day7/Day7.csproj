@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C452DA0B-DE7F-4B9C-81C0-1F19E909BFF5}</ProjectGuid>
+    <ProjectGuid>{9A0480DA-B184-4A57-9D75-5E80804C07CC}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Day6</RootNamespace>
-    <AssemblyName>Day6</AssemblyName>
+    <RootNamespace>Day7</RootNamespace>
+    <AssemblyName>Day7</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -42,18 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Coord.cs" />
-    <Compile Include="Grid.cs" />
+    <Compile Include="Step.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StepCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="day6-2018.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

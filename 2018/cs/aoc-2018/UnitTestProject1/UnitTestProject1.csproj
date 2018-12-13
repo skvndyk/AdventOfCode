@@ -48,6 +48,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Day7_Tests.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Day6_Tests.cs" />
     <Compile Include="Day5_Tests.cs" />
     <Compile Include="Day4_Tests.cs" />
@@ -84,6 +87,10 @@
       <Project>{09d292cd-dc06-4a2f-a45d-1c8a053e3b57}</Project>
       <Name>Day5</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Day7\Day7.csproj">
+      <Project>{9a0480da-b184-4a57-9d75-5e80804c07cc}</Project>
+      <Name>Day7</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="day2-2018-test.txt">
@@ -96,6 +103,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="day6-2018-test.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="day7-2018-test.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -15,7 +15,7 @@ namespace UnitTestProject1
         {
             string filePath = "day6-2018-test.txt";
             List<string> lines = Program.ReadTextIntoLines(filePath);
-            List<Point> coords = Program.ReadLinesIntoCoords(lines);
+            List<Coord> coords = Program.ReadLinesIntoCoords(lines);
 
         }
 
@@ -24,10 +24,8 @@ namespace UnitTestProject1
         {
             string filePath = "day6-2018-test.txt";
             List<string> lines = Program.ReadTextIntoLines(filePath);
-            List<Point> points = Program.ReadLinesIntoCoords(lines);
+            List<Coord> points = Program.ReadLinesIntoCoords(lines);
             Program.DisplayGrid(points);
-            Console.ReadLine();
-
         }
        
     }

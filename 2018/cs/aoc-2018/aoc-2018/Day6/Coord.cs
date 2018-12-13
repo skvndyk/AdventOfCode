@@ -1,21 +1,19 @@
-﻿namespace Day6
+﻿using System;
+
+namespace Day6
 {
-    public class Point
+    public class Coord
     {
-        public Point(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
         public int X { get; set; }
         public int Y { get; set; }
+        public Coord ClosestNamedPoint { get; set; }
 
         public override bool Equals(object obj)
         {
-            var c = obj as Point;
+            var c = obj as Coord;
             if (c == null) return false;
             return X == c.X && Y == c.Y;
-        }
+        }   
 
         public override int GetHashCode()
         {
@@ -25,6 +23,5 @@
             return hash;
         }
     }
-
 
 }

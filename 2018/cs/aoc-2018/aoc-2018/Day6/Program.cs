@@ -15,49 +15,49 @@ namespace Day6
         {
             string filePath = "day6-2018.txt";
             List<string> lines = ReadTextIntoLines(filePath);
-            List<Point> points = ReadLinesIntoCoords(lines);
+            List<Coord> points = ReadLinesIntoCoords(lines);
             Console.WriteLine($"Part 1: {Part1(points)}");
             //Console.WriteLine($"Part 2: {Part2(lines)}");
             Console.ReadLine();
 
         }
 
-        public static int Part1(List<Point> points)
+        public static int Part1(List<Coord> points)
         {
             throw new NotImplementedException();
         }
 
-        public static int Part2(List<Point> points)
+        public static int Part2(List<Coord> points)
         {
             throw new NotImplementedException();
         }
 
-        public static void DisplayGrid(List<Point> points)
+        public static void DisplayGrid(List<Coord> points)
         {
-            Grid grid = new Grid(){ Points = points };
-            for (int x = grid.LowerLeft.X; x < grid.LowerRight.X; x++)
+            Grid grid = new Grid(points);
+            for (int y = grid.MinYCoord.Y; y <= grid.MaxYCoord.Y; y++)
             {
                 string line = "";
-                for (int y = grid.LowerLeft.Y; y >= grid.UpperLeft.Y; y++)
+                for (int x = grid.MinXCoord.X; x <= grid.MaxXCoord.X; x++)
                 {
-                    line += grid.DoesPointExistAtCoord(x, y) ? "X" : ".";
+                    grid.GetClosestNamedPoint(new Coord() {X = x, Y = y});
+                    line += grid.DoesNamedPointExistAtCoord(x, y) ? "X" : "o";
                 }
                 Console.WriteLine(line);
             }
-            Console.ReadLine();
         }
 
-        public static List<Point> ReadLinesIntoCoords(List<string> lines)
+        public static List<Coord> ReadLinesIntoCoords(List<string> lines)
         {
             return lines.Select(ReadLineIntoCoord).ToList();
         }
 
-        public static Point ReadLineIntoCoord(string line)
+        public static Coord ReadLineIntoCoord(string line)
         {
             Match match = _coordRegx.Match(line);
             if (!match.Success) throw new Exception($@"could not parse line with contents {line}");
             GroupCollection groups = match.Groups;
-            return new Point (int.Parse(groups["x"].Value), int.Parse(groups["y"].Value));
+            return new Coord (){ X = int.Parse(groups["x"].Value), Y = int.Parse(groups["y"].Value)};
         }
 
         
