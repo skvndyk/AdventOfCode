@@ -13,7 +13,7 @@ namespace Day7
         
         static void Main(string[] args)
         {
-            string filePath = "day6-2018.txt";
+            string filePath = "day7-2018.txt";
             List<string> lines = ReadTextIntoLines(filePath);
             Console.WriteLine($"Part 1: {Part1(lines)}");
             //Console.WriteLine($"Part 2: {Part2(lines)}");
@@ -22,6 +22,9 @@ namespace Day7
 
         public static string Part1(List<string> lines)
         {
+
+            //wrong answer:
+            //LABDCFJMNVQWHIRKTEUXOZSYPG
             StepCollection stepCollection = new StepCollection();
             ReadLinesIntoSteps(lines, stepCollection);
             TraverseStepTree(stepCollection);
@@ -49,12 +52,9 @@ namespace Day7
                 GroupCollection groups = match.Groups;
                 Step step1 = GetStepFromListById(groups[1].Value, stepCollection);
                 Step step2 = GetStepFromListById(groups[2].Value, stepCollection);
-                step1.NextStepRequirements.Add(step2);
                 step2.PreviousStepRequirements.Add(step1);
             }
         }
-
-  
            
         public static Step GetStepFromListById(string id, StepCollection stepCollection)
         {
@@ -71,11 +71,6 @@ namespace Day7
             }
         }
 
-        public static void CompleteTree(StepCollection stepCollection)
-        {
-            
-
-        }
         public static void TraverseStepTree(StepCollection stepCollection)
         {
             Step currStep = GetFirstStep(stepCollection);
@@ -86,45 +81,33 @@ namespace Day7
                 currStep = GetNextStep(stepCollection, currStep);
                 stepCollection.PlacedSteps.Add(currStep);
             }
-           
         }
 
         public static string GenerateTreeString(StepCollection stepCollection)
         {
-            return stepCollection.PlacedSteps.Select(s => s.Id).ToString();
+            return stepCollection.PlacedSteps.Aggregate("", (current, step) => current + step.Id);
         }
 
         public static Step GetNextStep(StepCollection stepCollection, Step currStep)
         {
             List<Step> potentialNextSteps = new List<Step>();
-            //todo linq it uppp
-            foreach (Step mbNextStep in currStep.NextStepRequirements)
+            List<Step> unplacedSteps = stepCollection.AllSteps.Except(stepCollection.PlacedSteps).ToList();
+            foreach (Step step in unplacedSteps)
             {
-                foreach (Step previousStepRequirement in mbNextStep.PreviousStepRequirements)
+                if (step.PreviousStepRequirements.All(s => stepCollection.PlacedSteps.Contains(s)))
                 {
-                    if (stepCollection.PlacedSteps.Any(s => s.Id == previousStepRequirement.Id))
-                    {
-                        potentialNextSteps.Add(mbNextStep);
-                    }
+                    potentialNextSteps.Add(step);
                 }
             }
             return potentialNextSteps.First(s => s.IdNum == potentialNextSteps.Min(s2 => s2.IdNum));
 
         }
 
-        public static Step GetLastStep(StepCollection stepCollection)
-        {
-            Step lastStep =  stepCollection.AllSteps.First(s => s.NextStepRequirements.Count == 0);
-            lastStep.PathPos = stepCollection.AllSteps.Count - 1;
-            return lastStep;
-
-        }
         public static Step GetFirstStep(StepCollection stepCollection)
         {
-            Step lastStep = stepCollection.AllSteps.First(s => s.PreviousStepRequirements.Count == 0);
-            lastStep.PathPos = 0;
-            return lastStep;
-
+            //todo could this be done in fewer lines?
+            var candidates = stepCollection.AllSteps.Where(s => s.PreviousStepRequirements.Count == 0).ToList();
+            return candidates.First(s => s.IdNum == candidates.Min(s2 => s2.IdNum));
         }
     }
 }
