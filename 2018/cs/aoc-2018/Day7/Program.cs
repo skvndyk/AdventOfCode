@@ -20,12 +20,12 @@ namespace Day7
             Console.ReadLine();
         }
 
-        public static int Part1(List<string> lines)
+        public static string Part1(List<string> lines)
         {
             StepCollection stepCollection = new StepCollection();
-            List<Step> steps = ReadLinesIntoSteps(lines, stepCollection);
-            
-            throw new NotImplementedException();
+            ReadLinesIntoSteps(lines, stepCollection);
+            TraverseStepTree(stepCollection);
+            return GenerateTreeString(stepCollection);
         }
 
         public static int Part2(List<string> lines)
@@ -39,7 +39,7 @@ namespace Day7
             return rawInput.Split('\n').ToList();
         }
 
-        public static List<Step> ReadLinesIntoSteps(List<string> lines, StepCollection stepCollection)
+        public static void ReadLinesIntoSteps(List<string> lines, StepCollection stepCollection)
         {
             List<Step> steps = new List<Step>();
             foreach (string line in lines)
@@ -48,13 +48,14 @@ namespace Day7
                 if (!match.Success) throw new Exception($@"could not parse line with contents {line}");
                 GroupCollection groups = match.Groups;
                 Step step1 = GetStepFromListById(groups[1].Value, stepCollection);
-                Step step2 = GetStepFromListById(groups[1].Value, stepCollection);
-                step1.StepsToComeBefore.Add(step2);
-                
+                Step step2 = GetStepFromListById(groups[2].Value, stepCollection);
+                step1.NextStepRequirements.Add(step2);
+                step2.PreviousStepRequirements.Add(step1);
             }
-            return steps;
         }
 
+  
+           
         public static Step GetStepFromListById(string id, StepCollection stepCollection)
         {
             Step step = stepCollection.AllSteps.FirstOrDefault(s => s.Id == id);
@@ -68,6 +69,62 @@ namespace Day7
                 stepCollection.AllSteps.Add(newStep);
                 return newStep;
             }
+        }
+
+        public static void CompleteTree(StepCollection stepCollection)
+        {
+            
+
+        }
+        public static void TraverseStepTree(StepCollection stepCollection)
+        {
+            Step currStep = GetFirstStep(stepCollection);
+            stepCollection.PlacedSteps.Add(currStep);
+            
+            while (stepCollection.PlacedSteps.Count < stepCollection.AllSteps.Count)
+            {
+                currStep = GetNextStep(stepCollection, currStep);
+                stepCollection.PlacedSteps.Add(currStep);
+            }
+           
+        }
+
+        public static string GenerateTreeString(StepCollection stepCollection)
+        {
+            return stepCollection.PlacedSteps.Select(s => s.Id).ToString();
+        }
+
+        public static Step GetNextStep(StepCollection stepCollection, Step currStep)
+        {
+            List<Step> potentialNextSteps = new List<Step>();
+            //todo linq it uppp
+            foreach (Step mbNextStep in currStep.NextStepRequirements)
+            {
+                foreach (Step previousStepRequirement in mbNextStep.PreviousStepRequirements)
+                {
+                    if (stepCollection.PlacedSteps.Any(s => s.Id == previousStepRequirement.Id))
+                    {
+                        potentialNextSteps.Add(mbNextStep);
+                    }
+                }
+            }
+            return potentialNextSteps.First(s => s.IdNum == potentialNextSteps.Min(s2 => s2.IdNum));
+
+        }
+
+        public static Step GetLastStep(StepCollection stepCollection)
+        {
+            Step lastStep =  stepCollection.AllSteps.First(s => s.NextStepRequirements.Count == 0);
+            lastStep.PathPos = stepCollection.AllSteps.Count - 1;
+            return lastStep;
+
+        }
+        public static Step GetFirstStep(StepCollection stepCollection)
+        {
+            Step lastStep = stepCollection.AllSteps.First(s => s.PreviousStepRequirements.Count == 0);
+            lastStep.PathPos = 0;
+            return lastStep;
+
         }
     }
 }

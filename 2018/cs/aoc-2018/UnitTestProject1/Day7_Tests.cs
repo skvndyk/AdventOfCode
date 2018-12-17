@@ -15,7 +15,7 @@ namespace UnitTestProject1
         {
             string filePath = "day7-2018-test.txt";
             List<string> lines = Program.ReadTextIntoLines(filePath);
-            Program.Part1(lines);
+            Assert.AreEqual("CABDFE", Program.Part1(lines));
         }
 
      

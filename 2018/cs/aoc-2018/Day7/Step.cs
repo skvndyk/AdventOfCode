@@ -10,14 +10,16 @@ namespace Day7
     {
         public string Id { get; set; }
         public int IdNum => Id.ToCharArray().First();
-        public List<Step> StepsToComeBefore { get; set; } = new List<Step>();
+        public List<Step> NextStepRequirements { get; set; } = new List<Step>();
+        public List<Step> PreviousStepRequirements { get; set; } = new List<Step>();
         public Step GetEarlierStep(Step other)
         {
             return IdNum < other.IdNum ? this : other;
         }
 
-        public Step NextStep;
-        public Step PreviousStep;
+        public List<Step> PotentialNextSteps;
+        public Step PreviousStep;   
+        public int PathPos;
 
         //public override bool Equals(object obj)
         //{

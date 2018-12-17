@@ -9,5 +9,6 @@ namespace Day7
     public class StepCollection
     {
         public List<Step> AllSteps { get; set; } = new List<Step>();
+        public List<Step> PlacedSteps { get; set; } = new List<Step>();
     }
 }
