@@ -18,7 +18,15 @@ namespace UnitTestProject1
             Assert.AreEqual("CABDFE", Program.Part1(lines));
         }
 
-     
-       
+        [TestMethod]
+        public void P2()
+        {
+            string filePath = "day7-2018-test.txt";
+            List<string> lines = Program.ReadTextIntoLines(filePath);
+            Assert.AreEqual("CABFDE", Program.Part2(lines));
+        }
+
+
+
     }
 }

@@ -22,9 +22,6 @@ namespace Day7
 
         public static string Part1(List<string> lines)
         {
-
-            //wrong answer:
-            //LABDCFJMNVQWHIRKTEUXOZSYPG
             StepCollection stepCollection = new StepCollection();
             ReadLinesIntoSteps(lines, stepCollection);
             TraverseStepTree(stepCollection);
@@ -33,6 +30,8 @@ namespace Day7
 
         public static int Part2(List<string> lines)
         {
+            StepCollection stepCollection = new StepCollection();
+            ReadLinesIntoSteps(lines, stepCollection);
             throw new NotImplementedException();
         }
 
