@@ -46,22 +46,24 @@ namespace Day3
 
         public static Dictionary<Coord, int> GetAllSeenCoords(List<FabricClaim> claims)
         {
-            Dictionary<Coord, int> seenCoordDict = new Dictionary<Coord, int>();
-            foreach (FabricClaim claim in claims)
-            {
-                foreach (Coord coord in claim.CoordsCovered)
-                {
-                    if (seenCoordDict.TryGetValue(coord, out int val))
-                    {
-                        seenCoordDict[coord] += 1;
-                    }
-                    else
-                    {
-                        seenCoordDict[coord] = 1;
-                    }
-                }
-            }
-            return seenCoordDict;
+            //todo just doing this temporarily bc VS version at home doesn't have right version of c#
+            //Dictionary<Coord, int> seenCoordDict = new Dictionary<Coord, int>();
+            //foreach (FabricClaim claim in claims)
+            //{
+            //    foreach (Coord coord in claim.CoordsCovered)
+            //    {
+            //        if (seenCoordDict.TryGetValue(coord, out int val))
+            //        {
+            //            seenCoordDict[coord] += 1;
+            //        }
+            //        else
+            //        {
+            //            seenCoordDict[coord] = 1;
+            //        }
+            //    }
+            //}
+            //return seenCoordDict;
+            throw new NotImplementedException();
         }
 
         

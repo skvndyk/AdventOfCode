@@ -19,33 +19,35 @@ namespace Day2
 
         public static int Part1(List<string> boxIds)
         {
-            int appearsTwice = 0;
-            int appearsThrice = 0;
-            foreach (string boxId in boxIds)
-            {
-                Dictionary<char, int> dict = new Dictionary<char, int>();
-                foreach (char letter in boxId)
-                {
-                    if (dict.TryGetValue(letter, out int val))
-                    {
-                        dict[letter] += 1;
-                    }
-                    else
-                    {
-                        dict[letter] = 1;
-                    }
-                }
-                if (dict.Values.Contains(2))
-                {
-                    appearsTwice++;
-                }
-                if (dict.Values.Contains(3))
-                {
-                    appearsThrice++;
-                }
+            //todo just doing this temporarily bc VS version at home doesn't have right version of c#
+            //int appearsTwice = 0;
+            //int appearsThrice = 0;
+            //foreach (string boxId in boxIds)
+            //{
+            //    Dictionary<char, int> dict = new Dictionary<char, int>();
+            //    foreach (char letter in boxId)
+            //    {
+            //        if (dict.TryGetValue(letter, out int val))
+            //        {
+            //            dict[letter] += 1;
+            //        }
+            //        else
+            //        {
+            //            dict[letter] = 1;
+            //        }
+            //    }
+            //    if (dict.Values.Contains(2))
+            //    {
+            //        appearsTwice++;
+            //    }
+            //    if (dict.Values.Contains(3))
+            //    {
+            //        appearsThrice++;
+            //    }
 
-            }
-            return appearsTwice * appearsThrice;
+            //}
+            //return appearsTwice * appearsThrice;
+            throw new NotImplementedException();
         }
 
         public static string Part2(List<string> boxIds)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Day7.Models;
 
 namespace Day7
 {
@@ -15,8 +16,9 @@ namespace Day7
         {
             string filePath = "day7-2018.txt";
             List<string> lines = ReadTextIntoLines(filePath);
+            int numWorkersNeeded = 5;
             Console.WriteLine($"Part 1: {Part1(lines)}");
-            //Console.WriteLine($"Part 2: {Part2(lines)}");
+            //Console.WriteLine($"Part 2: {Part2(lines, numWorkersNeeded)}");
             Console.ReadLine();
         }
 
@@ -28,11 +30,38 @@ namespace Day7
             return GenerateTreeString(stepCollection);
         }
 
-        public static int Part2(List<string> lines)
+        public static int Part2(List<string> lines, int numWorkersNeeded)
         {
             StepCollection stepCollection = new StepCollection();
             ReadLinesIntoSteps(lines, stepCollection);
+            AssignStepsToWorkers(stepCollection, numWorkersNeeded);
             throw new NotImplementedException();
+        }
+
+        public static void AssignStepsToWorkers(StepCollection stepCollection, int numWorkersNeeded)
+        {
+            int workerIdx = 0;
+            WorkerCollection workerCollection = new WorkerCollection(numWorkersNeeded);
+            //todo would be nice to factor this stuff out between part1 and part2...
+            Step currStep = GetFirstStep(stepCollection);
+            stepCollection.PlacedSteps.Add(currStep);
+            workerCollection.GetWorkerById(workerIdx).CurrentStep = currStep;
+            while (stepCollection.PlacedSteps.Count < stepCollection.AllSteps.Count)
+            {
+                currStep = GetNextStep(stepCollection, currStep);
+                stepCollection.PlacedSteps.Add(currStep);
+            }
+        }
+
+        public static void WorkUntilReassignmentNeeded(WorkerCollection workerCollection)
+        {
+            while (workerCollection.WorkersNeedingWork != null && workerCollection.WorkersNeedingWork.Count > 0)
+            {
+                foreach (Worker worker in workerCollection.WorkersNeedingWork)
+                {
+                    worker.DecrementStepCtr();
+                }
+            }
         }
 
         public static List<string> ReadTextIntoLines(string filePath)
@@ -54,9 +83,9 @@ namespace Day7
                 step2.PreviousStepRequirements.Add(step1);
             }
         }
-           
+
         public static Step GetStepFromListById(string id, StepCollection stepCollection)
-        {
+        {   
             Step step = stepCollection.AllSteps.FirstOrDefault(s => s.Id == id);
             if (step != null)
             {
