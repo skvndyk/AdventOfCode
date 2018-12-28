@@ -9,17 +9,30 @@ namespace Day7.Models
 
         //todo need null checking and stuff here
         public Step CurrentStep { get; set; }
-        public int StepCtr { get; protected set; }
+        public int? StepCtr { get; set; }
 
         public bool IsStepComplete => StepCtr == 0;
         public bool HasStepAssignment => CurrentStep != null;
         public bool IsActive => !IsStepComplete && HasStepAssignment;
 
-        public void DecrementStepCtr() => StepCtr = StepCtr > 0 ? StepCtr-- : StepCtr;
+        public void DecrementStepCtr()
+        {
+            if (StepCtr > 0)
+            {
+                StepCtr--;
+            }
+        }
+
         public void AssignStepToWorker(Step currStep)
         {
             CurrentStep = currStep;
             StepCtr = currStep.IdNum - 64;
+        }
+
+        public void RemoveFinishedStep()
+        {
+            CurrentStep = null;
+            StepCtr = null;
         }
     }
 }

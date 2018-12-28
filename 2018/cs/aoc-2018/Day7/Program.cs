@@ -18,7 +18,8 @@ namespace Day7
             List<string> lines = ReadTextIntoLines(filePath);
             int numWorkersNeeded = 5;
             Console.WriteLine($"Part 1: {Part1(lines)}");
-            //Console.WriteLine($"Part 2: {Part2(lines, numWorkersNeeded)}");
+            //todo viz for part 2 could be cool
+            Console.WriteLine($"Part 2: {Part2(lines, numWorkersNeeded)}");
             Console.ReadLine();
         }
 
@@ -34,36 +35,33 @@ namespace Day7
         {
             StepCollection stepCollection = new StepCollection();
             ReadLinesIntoSteps(lines, stepCollection);
-            DoTheWork(stepCollection, numWorkersNeeded);
-            throw new NotImplementedException();
-        }
 
-        public static void DoTheWork(StepCollection stepCollection, int numWorkersNeeded)
-        {
             WorkLog workLog = new WorkLog();
             workLog.WorkerCollection = new WorkerCollection(numWorkersNeeded);
+            DoTheWork(stepCollection, numWorkersNeeded, workLog);
+            return workLog.TimeElapsed;
+        }
+
+        public static void DoTheWork(StepCollection stepCollection, int numWorkersNeeded, WorkLog workLog)
+        {
+            
            //todo would be nice to factor this stuff out between part1 and part2...
             Step currStep = GetFirstStep(stepCollection);
             stepCollection.AssignedSteps.Add(currStep);
             workLog.WorkerCollection.GetWorkerById(workLog.CurrWorkerIdx).AssignStepToWorker(currStep);
             while (!stepCollection.AllStepsCompleted)
             {
-                //assign work if possible
-                //work until a step is complete
-                // then loop
                 AssignStepsIfPossible(stepCollection, workLog, currStep);
-                WorkUntilReassignmentNeeded(workLog);
-                //todo this part isn't right, still investigating
-                //stepCollection.CompletedSteps.Add(currStep);
-                
+                WorkUntilReassignmentNeeded(stepCollection, workLog);
             }
         }
 
-        //todo have to assign ALL possible steps, not just one
+
         public static void AssignStepsIfPossible(StepCollection stepCollection, WorkLog workLog, Step currStep)
         {
-            while (GetNextStep(stepCollection, currStep) != null)
+            while (GetNextStepP2(stepCollection, currStep) != null && workLog.WorkerCollection.InactiveWorkers.Count > 0)
             {
+                currStep = GetNextStepP2(stepCollection, currStep);
                 Worker inactiveWorker = workLog.WorkerCollection.InactiveWorkers.First();
                 inactiveWorker.AssignStepToWorker(currStep);
                 stepCollection.AssignedSteps.Add(currStep);
@@ -71,7 +69,7 @@ namespace Day7
             }
        }
 
-        public static void WorkUntilReassignmentNeeded(WorkLog workLog)
+        public static void WorkUntilReassignmentNeeded(StepCollection stepCollection, WorkLog workLog)
         {
             if (workLog.WorkerCollection.HasActiveWorkers)
             {
@@ -84,10 +82,14 @@ namespace Day7
                     {
                         worker.DecrementStepCtr();
                         workLog.TimeElapsed++;
+                        if (worker.IsStepComplete)
+                        {
+                            stepCollection.CompletedSteps.Add(worker.CurrentStep);
+                            worker.RemoveFinishedStep();
+                        }
                     }
                     currCount = workLog.WorkerCollection.ActiveWorkers.Count;
                 }
-
             }
         }
 
@@ -154,7 +156,7 @@ namespace Day7
         {
             List<Step> unassignedSteps = stepCollection.UnassignedSteps;
             List<Step> potentialNextSteps = unassignedSteps.Where(step => step.PreviousStepRequirements.All(s => stepCollection.CompletedSteps.Contains(s))).ToList();
-            return potentialNextSteps.First(s => s.IdNum == potentialNextSteps.Min(s2 => s2.IdNum));
+            return potentialNextSteps.FirstOrDefault(s => s.IdNum == potentialNextSteps.Min(s2 => s2.IdNum));
         }
 
         public static Step GetFirstStep(StepCollection stepCollection)

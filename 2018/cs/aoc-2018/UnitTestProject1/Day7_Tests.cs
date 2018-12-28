@@ -24,7 +24,7 @@ namespace UnitTestProject1
             string filePath = "day7-2018-test.txt";
             int numWorkersNeeded = 2;
             List<string> lines = Program.ReadTextIntoLines(filePath);
-            Assert.AreEqual("CABFDE", Program.Part2(lines, numWorkersNeeded));
+            Assert.AreEqual(15, Program.Part2(lines, numWorkersNeeded));
         }
 
 
