@@ -19,7 +19,7 @@ namespace Day7.Models
         public void AssignStepToWorker(Step currStep)
         {
             CurrentStep = currStep;
-            StepCtr = currStep.IdNum;
+            StepCtr = currStep.IdNum - 64;
         }
     }
 }

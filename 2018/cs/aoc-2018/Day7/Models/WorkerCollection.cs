@@ -17,8 +17,10 @@ namespace Day7.Models
             }
         }
         public List<Worker> Workers { get; set; }
+
         public Worker GetWorkerById(int id) => Workers.FirstOrDefault(w => w.Id == id);
         public List<Worker> ActiveWorkers => Workers.Where(w => w.IsActive).ToList();
+        public List<Worker> InactiveWorkers => Workers.Where(w => !w.IsActive).ToList();
         public bool HasActiveWorkers => ActiveWorkers != null && ActiveWorkers.Count > 0;
 
     }

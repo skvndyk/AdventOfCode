@@ -44,42 +44,50 @@ namespace Day7
             workLog.WorkerCollection = new WorkerCollection(numWorkersNeeded);
            //todo would be nice to factor this stuff out between part1 and part2...
             Step currStep = GetFirstStep(stepCollection);
-            stepCollection.CompletedSteps.Add(currStep);
-            workLog.WorkerCollection.GetWorkerById(workLog.CurrWorkerIdx).CurrentStep = currStep;
+            stepCollection.AssignedSteps.Add(currStep);
+            workLog.WorkerCollection.GetWorkerById(workLog.CurrWorkerIdx).AssignStepToWorker(currStep);
             while (!stepCollection.AllStepsCompleted)
             {
                 //assign work if possible
                 //work until a step is complete
                 // then loop
-                AssignStepsIfPossible(stepCollection, workLog);
+                AssignStepsIfPossible(stepCollection, workLog, currStep);
                 WorkUntilReassignmentNeeded(workLog);
-                Step nextStep = GetNextStep(stepCollection, currStep);
-                
-                stepCollection.CompletedSteps.Add(currStep);
+                //todo this part isn't right, still investigating
+                //stepCollection.CompletedSteps.Add(currStep);
                 
             }
         }
 
-        public static void AssignStepsIfPossible(StepCollection stepCollection, WorkLog workLog)
+        //todo have to assign ALL possible steps, not just one
+        public static void AssignStepsIfPossible(StepCollection stepCollection, WorkLog workLog, Step currStep)
         {
-            
-        }
+            while (GetNextStep(stepCollection, currStep) != null)
+            {
+                Worker inactiveWorker = workLog.WorkerCollection.InactiveWorkers.First();
+                inactiveWorker.AssignStepToWorker(currStep);
+                stepCollection.AssignedSteps.Add(currStep);
+                AssignStepsIfPossible(stepCollection, workLog, currStep);
+            }
+       }
 
         public static void WorkUntilReassignmentNeeded(WorkLog workLog)
         {
             if (workLog.WorkerCollection.HasActiveWorkers)
             {
+                List<Worker> currActiveWorkers = workLog.WorkerCollection.ActiveWorkers;
                 int initialCount = workLog.WorkerCollection.ActiveWorkers.Count;
                 int currCount = initialCount;
                 while (currCount == initialCount)
                 {
-                    foreach (Worker worker in workLog.WorkerCollection.ActiveWorkers)
+                    foreach (Worker worker in currActiveWorkers)
                     {
                         worker.DecrementStepCtr();
                         workLog.TimeElapsed++;
                     }
                     currCount = workLog.WorkerCollection.ActiveWorkers.Count;
                 }
+
             }
         }
 
@@ -139,6 +147,13 @@ namespace Day7
         {
             List<Step> nonCompletedSteps = stepCollection.NonCompletedSteps;
             List<Step> potentialNextSteps = nonCompletedSteps.Where(step => step.PreviousStepRequirements.All(s => stepCollection.CompletedSteps.Contains(s))).ToList();
+            return potentialNextSteps.First(s => s.IdNum == potentialNextSteps.Min(s2 => s2.IdNum));
+        }
+
+        public static Step GetNextStepP2(StepCollection stepCollection, Step currStep)
+        {
+            List<Step> unassignedSteps = stepCollection.UnassignedSteps;
+            List<Step> potentialNextSteps = unassignedSteps.Where(step => step.PreviousStepRequirements.All(s => stepCollection.CompletedSteps.Contains(s))).ToList();
             return potentialNextSteps.First(s => s.IdNum == potentialNextSteps.Min(s2 => s2.IdNum));
         }
 
