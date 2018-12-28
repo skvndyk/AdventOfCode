@@ -18,7 +18,6 @@ namespace Day7
             List<string> lines = ReadTextIntoLines(filePath);
             int numWorkersNeeded = 5;
             Console.WriteLine($"Part 1: {Part1(lines)}");
-            //todo viz for part 2 could be cool
             Console.WriteLine($"Part 2: {Part2(lines, numWorkersNeeded)}");
             Console.ReadLine();
         }
@@ -44,7 +43,13 @@ namespace Day7
 
         public static void DoTheWork(StepCollection stepCollection, int numWorkersNeeded, WorkLog workLog)
         {
-            
+            string headerString = "Second\t\t";
+            for (int i = 1; i <= numWorkersNeeded; i++)
+            {
+                headerString += $"Worker {i}\t";
+            }
+            headerString += "Done";
+            Console.WriteLine(headerString);
            //todo would be nice to factor this stuff out between part1 and part2...
             Step currStep = GetFirstStep(stepCollection);
             stepCollection.AssignedSteps.Add(currStep);
@@ -78,10 +83,11 @@ namespace Day7
                 int currCount = initialCount;
                 while (currCount == initialCount)
                 {
+                    WriteCurrentStatusToScreen(workLog, stepCollection);
+                    workLog.TimeElapsed++;
                     foreach (Worker worker in currActiveWorkers)
                     {
                         worker.DecrementStepCtr();
-                        workLog.TimeElapsed++;
                         if (worker.IsStepComplete)
                         {
                             stepCollection.CompletedSteps.Add(worker.CurrentStep);
@@ -91,6 +97,20 @@ namespace Day7
                     currCount = workLog.WorkerCollection.ActiveWorkers.Count;
                 }
             }
+        }
+
+        public static void WriteCurrentStatusToScreen(WorkLog workLog, StepCollection stepCollection)
+        {
+            int numWorkers = workLog.WorkerCollection.Workers.Count;
+            string outputString = $"{workLog.TimeElapsed}\t\t";
+            for (int i = 0; i < numWorkers; i++)
+            {
+                Worker currWorker = workLog.WorkerCollection.Workers[i];
+                outputString += currWorker.IsActive ? $"{currWorker.CurrentStep.Id}\t\t" : ".\t\t";
+            }
+            outputString += stepCollection.CompletedSteps.Aggregate("", (current, step) => current + step.Id);
+            Console.WriteLine(outputString);
+            return;
         }
 
         public static List<string> ReadTextIntoLines(string filePath)
