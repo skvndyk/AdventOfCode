@@ -32,9 +32,9 @@ namespace Day7
 
         public static int Part2(List<string> lines, int numWorkersNeeded)
         {
+            //176: too low
             StepCollection stepCollection = new StepCollection();
             ReadLinesIntoSteps(lines, stepCollection);
-
             WorkLog workLog = new WorkLog();
             workLog.WorkerCollection = new WorkerCollection(numWorkersNeeded);
             DoTheWork(stepCollection, numWorkersNeeded, workLog);
@@ -48,8 +48,8 @@ namespace Day7
             {
                 headerString += $"Worker {i}\t";
             }
-            headerString += "Done";
-            Console.WriteLine(headerString);
+            headerString += "Done\n";
+            System.IO.File.WriteAllText("day7-2018p2-results.txt", headerString);
            //todo would be nice to factor this stuff out between part1 and part2...
             Step currStep = GetFirstStep(stepCollection);
             stepCollection.AssignedSteps.Add(currStep);
@@ -102,15 +102,18 @@ namespace Day7
         public static void WriteCurrentStatusToScreen(WorkLog workLog, StepCollection stepCollection)
         {
             int numWorkers = workLog.WorkerCollection.Workers.Count;
-            string outputString = $"{workLog.TimeElapsed}\t\t";
+            string outputString = $"{workLog.TimeElapsed}\t\t\t";
             for (int i = 0; i < numWorkers; i++)
             {
                 Worker currWorker = workLog.WorkerCollection.Workers[i];
-                outputString += currWorker.IsActive ? $"{currWorker.CurrentStep.Id}\t\t" : ".\t\t";
+                outputString += currWorker.IsActive ? $"{currWorker.CurrentStep.Id}\t\t\t" : ".\t\t\t";
             }
             outputString += stepCollection.CompletedSteps.Aggregate("", (current, step) => current + step.Id);
-            Console.WriteLine(outputString);
-            return;
+            using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(@"day7-2018p2-results.txt", true))
+            {
+                file.WriteLine(outputString);
+            }
         }
 
         public static List<string> ReadTextIntoLines(string filePath)
