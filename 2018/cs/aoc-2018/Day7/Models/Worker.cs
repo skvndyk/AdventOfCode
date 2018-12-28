@@ -13,7 +13,7 @@ namespace Day7.Models
 
         public bool IsStepComplete => StepCtr == 0;
         public bool HasStepAssignment => CurrentStep != null;
-        public bool HasWorkToDo => !IsStepComplete && HasStepAssignment;
+        public bool IsActive => !IsStepComplete && HasStepAssignment;
 
         public void DecrementStepCtr() => StepCtr = StepCtr > 0 ? StepCtr-- : StepCtr;
         public void AssignStepToWorker(Step currStep)

@@ -34,32 +34,51 @@ namespace Day7
         {
             StepCollection stepCollection = new StepCollection();
             ReadLinesIntoSteps(lines, stepCollection);
-            AssignStepsToWorkers(stepCollection, numWorkersNeeded);
+            DoTheWork(stepCollection, numWorkersNeeded);
             throw new NotImplementedException();
         }
 
-        public static void AssignStepsToWorkers(StepCollection stepCollection, int numWorkersNeeded)
+        public static void DoTheWork(StepCollection stepCollection, int numWorkersNeeded)
         {
-            int workerIdx = 0;
-            WorkerCollection workerCollection = new WorkerCollection(numWorkersNeeded);
-            //todo would be nice to factor this stuff out between part1 and part2...
+            WorkLog workLog = new WorkLog();
+            workLog.WorkerCollection = new WorkerCollection(numWorkersNeeded);
+           //todo would be nice to factor this stuff out between part1 and part2...
             Step currStep = GetFirstStep(stepCollection);
-            stepCollection.PlacedSteps.Add(currStep);
-            workerCollection.GetWorkerById(workerIdx).CurrentStep = currStep;
-            while (stepCollection.PlacedSteps.Count < stepCollection.AllSteps.Count)
+            stepCollection.CompletedSteps.Add(currStep);
+            workLog.WorkerCollection.GetWorkerById(workLog.CurrWorkerIdx).CurrentStep = currStep;
+            while (!stepCollection.AllStepsCompleted)
             {
-                currStep = GetNextStep(stepCollection, currStep);
-                stepCollection.PlacedSteps.Add(currStep);
+                //assign work if possible
+                //work until a step is complete
+                // then loop
+                AssignStepsIfPossible(stepCollection, workLog);
+                WorkUntilReassignmentNeeded(workLog);
+                Step nextStep = GetNextStep(stepCollection, currStep);
+                
+                stepCollection.CompletedSteps.Add(currStep);
+                
             }
         }
 
-        public static void WorkUntilReassignmentNeeded(WorkerCollection workerCollection)
+        public static void AssignStepsIfPossible(StepCollection stepCollection, WorkLog workLog)
         {
-            while (workerCollection.WorkersNeedingWork != null && workerCollection.WorkersNeedingWork.Count > 0)
+            
+        }
+
+        public static void WorkUntilReassignmentNeeded(WorkLog workLog)
+        {
+            if (workLog.WorkerCollection.HasActiveWorkers)
             {
-                foreach (Worker worker in workerCollection.WorkersNeedingWork)
+                int initialCount = workLog.WorkerCollection.ActiveWorkers.Count;
+                int currCount = initialCount;
+                while (currCount == initialCount)
                 {
-                    worker.DecrementStepCtr();
+                    foreach (Worker worker in workLog.WorkerCollection.ActiveWorkers)
+                    {
+                        worker.DecrementStepCtr();
+                        workLog.TimeElapsed++;
+                    }
+                    currCount = workLog.WorkerCollection.ActiveWorkers.Count;
                 }
             }
         }
@@ -102,33 +121,25 @@ namespace Day7
         public static void TraverseStepTree(StepCollection stepCollection)
         {
             Step currStep = GetFirstStep(stepCollection);
-            stepCollection.PlacedSteps.Add(currStep);
+            stepCollection.CompletedSteps.Add(currStep);
             
-            while (stepCollection.PlacedSteps.Count < stepCollection.AllSteps.Count)
+            while (stepCollection.CompletedSteps.Count < stepCollection.AllSteps.Count)
             {
                 currStep = GetNextStep(stepCollection, currStep);
-                stepCollection.PlacedSteps.Add(currStep);
+                stepCollection.CompletedSteps.Add(currStep);
             }
         }
 
         public static string GenerateTreeString(StepCollection stepCollection)
         {
-            return stepCollection.PlacedSteps.Aggregate("", (current, step) => current + step.Id);
+            return stepCollection.CompletedSteps.Aggregate("", (current, step) => current + step.Id);
         }
 
         public static Step GetNextStep(StepCollection stepCollection, Step currStep)
         {
-            List<Step> potentialNextSteps = new List<Step>();
-            List<Step> unplacedSteps = stepCollection.AllSteps.Except(stepCollection.PlacedSteps).ToList();
-            foreach (Step step in unplacedSteps)
-            {
-                if (step.PreviousStepRequirements.All(s => stepCollection.PlacedSteps.Contains(s)))
-                {
-                    potentialNextSteps.Add(step);
-                }
-            }
+            List<Step> nonCompletedSteps = stepCollection.NonCompletedSteps;
+            List<Step> potentialNextSteps = nonCompletedSteps.Where(step => step.PreviousStepRequirements.All(s => stepCollection.CompletedSteps.Contains(s))).ToList();
             return potentialNextSteps.First(s => s.IdNum == potentialNextSteps.Min(s2 => s2.IdNum));
-
         }
 
         public static Step GetFirstStep(StepCollection stepCollection)
