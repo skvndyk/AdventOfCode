@@ -11,7 +11,7 @@ namespace Day8
     {
         public static void Main(string[] args)
         {
-            string filePath = "day7-2018.txt";
+            string filePath = "day8-2018.txt";
             List<int> input = ReadTextIntoLines(filePath);
             Console.WriteLine($"Part 1: {Part1(input)}");
             //Console.WriteLine($"Part 2: {Part2(lines)}");
