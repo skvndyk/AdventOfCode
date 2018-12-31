@@ -10,5 +10,6 @@ namespace Day8.Models
     {
         public List<Node> AllNodes { get; set; } = new List<Node>();
         public List<Node> VisitedNodes { get; set; } = new List<Node>();
+        public int NodeValueTotal { get; set; } = 0;
     }
 }

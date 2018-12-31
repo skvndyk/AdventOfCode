@@ -21,7 +21,9 @@ namespace UnitTestProject1
         [TestMethod]
         public void P2()
         {
-           
+            string filePath = "day8-2018-test.txt";
+            List<int> lines = Program.ReadTextIntoLines(filePath);
+            Assert.AreEqual(66, Program.Part2(lines));
         }
     }
 }

@@ -13,8 +13,8 @@ namespace Day8
         {
             string filePath = "day8-2018.txt";
             List<int> input = ReadTextIntoLines(filePath);
-            Console.WriteLine($"Part 1: {Part1(input)}");
-            //Console.WriteLine($"Part 2: {Part2(lines)}");
+            //Console.WriteLine($"Part 1: {Part1(input)}");
+            Console.WriteLine($"Part 2: {Part2(input)}");
             Console.ReadLine();
         }
 
@@ -22,11 +22,13 @@ namespace Day8
         {
             Tree tree = BuildTree(lines);
             return GetMetaDataSum(tree);
-    }
+        }
 
         public static int Part2(List<int> lines)
         {
-            throw new NotImplementedException();
+            Tree tree = BuildTree(lines);
+            //kinda wish i had marked rootNode but eh
+            return GetNodeValue(tree, tree.AllNodes.First());
         }
 
         public static Tree BuildTree(List<int> lines)
@@ -48,6 +50,36 @@ namespace Day8
             return tree.AllNodes.Sum(n => n.MetaData.Sum());
         }
 
+        public static int GetNodeValue(Tree tree, Node node)
+        {
+            return !node.HasChildren ? node.MetaData.Sum() : (from metaData in node.MetaData where metaData > 0 && metaData <= node.ChildNodes.Count select GetNodeValue(tree, node.ChildNodes[metaData - 1])).Sum();
+        }
+
+        //this is the long version of the crazy one liner resharper set up for this function
+        //public static int GetNodeValue(Tree tree, Node node)
+        //{
+        //    int nodeTal;
+        //    if (!node.HasChildren)
+        //    {
+        //        nodeTal = node.MetaData.Sum();
+        //    }
+        //    else
+        //    {
+        //        //this is the crazy linq, left long style stuff for reference
+        //        nodeTal = (from metaData in node.MetaData where metaData > 0 && metaData <= node.ChildNodes.Count select GetNodeValue(tree, node.ChildNodes[metaData - 1])).Sum();
+
+        //        //List<int> metaDatas = new List<int>();
+        //        //int nodeChildCount = node.ChildNodes.Count;
+        //        //foreach (int metaData in node.MetaData.Where(m => m > 0 && m <= nodeChildCount))
+        //        //{
+        //        //    metaDatas.Add(GetNodeValue(tree, node.ChildNodes[metaData - 1]));
+        //        //}
+        //        //nodeTal = metaDatas.Sum();
+        //        //nodeTal = (from metaData in node.MetaData where metaData > 0 && metaData <= node.ChildNodes.Count select GetNodeValue(tree, node.ChildNodes[metaData - 1])).Sum();
+        //    }
+
+        //    return nodeTal;
+        //}
         public static void AddNodeToTree(Queue<int> queue, Tree tree, Node currNode)
         {
             while (currNode.HasChildren && !currNode.HasVisitedAllChildren)
