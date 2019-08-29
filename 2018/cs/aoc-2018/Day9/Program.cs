@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using Day9.Extensions;
 using Day9.Models;
 
@@ -15,15 +14,21 @@ namespace Day9
             int numPlayers = 410;
             int maxMarbleValue = 72059;
 
+            Stopwatch _stopwatch = Stopwatch.StartNew();
+
             Game game = PlayGame(numPlayers, maxMarbleValue);
+
+            _stopwatch.Stop();
 
             Console.WriteLine("\n\n");
             Console.WriteLine($"Elf {game.WinningPlayer.Value} won with a score of {game.WinningPlayer.TotalScore}!");
+            Console.WriteLine($"Took {_stopwatch.ElapsedMilliseconds} ms to run.");
             Console.ReadLine();
         }
 
         public static Game PlayGame(int numPlayers, int maxMarbleValue)
         {
+
             Game game = new Game(numPlayers, maxMarbleValue);
             //initial marble placement
             game.CurrentMarble = new LinkedListNode<Marble>(new Marble()
@@ -32,7 +37,7 @@ namespace Day9
             });
             game.CurrentPlayer = game.Players.First;
             game.Circle.AddLast(game.CurrentMarble);
-            PrintCircle(game);
+            //PrintCircle(game);
                         
             while (game.CurrentMarble.Value.Value < game.MaxMarbleValue)
             {
@@ -74,6 +79,7 @@ namespace Day9
                 //now remove it and set the new marble
                 game.CurrentMarble = marbleToRemove.GetNextCircular();
                 game.Circle.Remove(marbleToRemove);
+                Console.WriteLine($"just removed marble {marbleToRemove.Value.Value}");
             }
 
             else
@@ -85,7 +91,7 @@ namespace Day9
             
             //move to next player next turn
             game.CurrentPlayer = game.CurrentPlayer.GetNextCircular();
-            PrintCircle(game);
+            //PrintCircle(game);
         }
     }
 }
