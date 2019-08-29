@@ -13,7 +13,9 @@ namespace Day9.Models
         public LinkedListNode<Marble> CurrentMarble { get; set; }
         public LinkedListNode<Player> CurrentPlayer { get; set; }
         public int MaxMarbleValue { get; set; }
-        
+        public int NextMarbleValueToPlace { get; set; }
+        public Player WinningPlayer => Players.Where(p => p.TotalScore == Players.Max(m => m.TotalScore)).First();
+
         public Game(int numPlayers, int maxMarbleValue)
         {
             Players = new LinkedList<Player>();
@@ -23,6 +25,11 @@ namespace Day9.Models
             }
             Circle = new LinkedList<Marble>();
             MaxMarbleValue = maxMarbleValue;
+            NextMarbleValueToPlace = 0;
+        }
+        public void IncrementNextMarbleValue()
+        {
+            NextMarbleValueToPlace++;
         }
     }
 }

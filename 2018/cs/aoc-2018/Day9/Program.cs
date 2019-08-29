@@ -15,26 +15,31 @@ namespace Day9
             int numPlayers = 410;
             int maxMarbleValue = 72059;
 
-            PlayGame(numPlayers, maxMarbleValue);
+            Game game = PlayGame(numPlayers, maxMarbleValue);
+
+            Console.WriteLine("\n\n");
+            Console.WriteLine($"Elf {game.WinningPlayer.Value} won with a score of {game.WinningPlayer.TotalScore}!");
             Console.ReadLine();
         }
 
-        public static void PlayGame(int numPlayers, int maxMarbleValue)
+        public static Game PlayGame(int numPlayers, int maxMarbleValue)
         {
             Game game = new Game(numPlayers, maxMarbleValue);
             //initial marble placement
             game.CurrentMarble = new LinkedListNode<Marble>(new Marble()
             {
-                Value = 0
+                Value = game.NextMarbleValueToPlace
             });
             game.CurrentPlayer = game.Players.First;
             game.Circle.AddLast(game.CurrentMarble);
             PrintCircle(game);
                         
-            while (game.CurrentMarble.Value.Value <= game.MaxMarbleValue)
+            while (game.CurrentMarble.Value.Value < game.MaxMarbleValue)
             {
                 PlaceNextMarble(game);
             }
+
+            return game;
         }
 
         public static void PrintCircle(Game game)
@@ -46,9 +51,10 @@ namespace Day9
 
         public static void PlaceNextMarble(Game game)
         {
+            game.IncrementNextMarbleValue();
             var nextMarble = new Marble()
             {
-                Value = game.CurrentMarble.Value.Value + 1
+                Value = game.NextMarbleValueToPlace
             };
 
             //check for 23 multiple in next marble
@@ -61,6 +67,7 @@ namespace Day9
                 for (int i = 0; i < 7; i++)
                 {
                     marbleToRemove = game.CurrentMarble.GetPreviousCircular();
+                    game.CurrentMarble = marbleToRemove;
                 }
                 //add that one to player's list
                 game.CurrentPlayer.Value.Marbles.Add(marbleToRemove.Value);
