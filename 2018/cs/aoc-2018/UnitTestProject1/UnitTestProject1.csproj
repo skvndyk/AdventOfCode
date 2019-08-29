@@ -102,6 +102,10 @@
       <Project>{59496f1f-6db1-4ba8-9e7f-32f5c9d204cc}</Project>
       <Name>Day8</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Day9\Day9.csproj">
+      <Project>{e8b9f058-e09a-47c5-9b34-3821d3acc391}</Project>
+      <Name>Day9</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="day2-2018-test.txt">

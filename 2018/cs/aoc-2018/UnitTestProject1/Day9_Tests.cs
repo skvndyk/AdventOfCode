@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Day8;
+using Day9;
 
 namespace UnitTestProject1
 {
@@ -16,6 +16,8 @@ namespace UnitTestProject1
             int numPlayers = 9;
             int lastMarbleValue = 25;
             int expectedHighScore = 32;
+            Program.PlayGame(numPlayers, lastMarbleValue);
+
         }
 
         [TestMethod]
