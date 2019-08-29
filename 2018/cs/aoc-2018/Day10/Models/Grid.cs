@@ -40,7 +40,7 @@ namespace Day10.Models
                     }
                     else
                     {
-                        lineToPrint += ".";
+                        lineToPrint += " ";
                     }
                 }
 

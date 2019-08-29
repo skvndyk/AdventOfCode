@@ -18,6 +18,8 @@ namespace Day10
             string fileName = "day10-2018-example.txt";
             Grid grid = ParseInputFile(fileName);
             grid.PrintGrid();
+            Task.Delay(1000);
+            Console.Clear();
             while (true)
             {
                 grid.ApplyVelocities();

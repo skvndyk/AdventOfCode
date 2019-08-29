@@ -16,7 +16,7 @@ namespace Day10.Models
         {
             CurrentPosition.X += Velocity.X;
             //for some reason their coord system has the Y-axis flipped
-            CurrentPosition.Y += -Velocity.Y;
+            CurrentPosition.Y += Velocity.Y;
         }
     }
 
