@@ -17,6 +17,14 @@ namespace Day10
         {
             string fileName = "day10-2018-example.txt";
             Grid grid = ParseInputFile(fileName);
+            grid.PrintGrid();
+            while (true)
+            {
+                grid.ApplyVelocities();
+                grid.PrintGrid();
+                Task.Delay(1000);
+                Console.Clear();
+            }
         }
 
         public static Grid ParseInputFile(string fileName)

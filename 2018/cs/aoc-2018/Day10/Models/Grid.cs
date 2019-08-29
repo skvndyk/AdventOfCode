@@ -14,7 +14,7 @@ namespace Day10.Models
         public int MinX => Points.Min(p => p.InitialPosition.X);
 
         public int MaxY => Points.Max(p => p.InitialPosition.Y);
-        public int MinY => Points.Min(p => p.InitialPosition.X);
+        public int MinY => Points.Min(p => p.InitialPosition.Y);
 
         public void ApplyVelocities()
         {
@@ -27,15 +27,21 @@ namespace Day10.Models
         public void PrintGrid()
         {
             List<string> toPrint = new List<string>();
-            for (int i = MinX; i <= MaxX; i++)
+
+            for (int y = MinY; y <= MaxY; y++)
             {
                 string lineToPrint = "";
 
-                for (int j = MinY; j < MaxY; j++)
+                for (int x = MinX; x <= MaxX; x++)
                 {
-                    lineToPrint += Points.Where(p => p.CurrentPosition.X == i && p.CurrentPosition.X == j)?
-                        .First() == null ? "." : "#";
-                   
+                    if (Points.Any(p => p.CurrentPosition.X == x && p.CurrentPosition.Y == y))
+                    {
+                        lineToPrint += "#";
+                    }
+                    else
+                    {
+                        lineToPrint += ".";
+                    }
                 }
 
                 toPrint.Add(lineToPrint);
