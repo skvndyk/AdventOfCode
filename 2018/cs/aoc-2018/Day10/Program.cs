@@ -6,6 +6,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Day10.Models;
+using System.Threading;
 
 namespace Day10
 {
@@ -18,13 +19,13 @@ namespace Day10
             string fileName = "day10-2018-example.txt";
             Grid grid = ParseInputFile(fileName);
             grid.PrintGrid();
-            Task.Delay(1000);
+            Thread.Sleep(1500);
             Console.Clear();
             while (true)
             {
                 grid.ApplyVelocities();
                 grid.PrintGrid();
-                Task.Delay(1000);
+                Thread.Sleep(1500);
                 Console.Clear();
             }
         }

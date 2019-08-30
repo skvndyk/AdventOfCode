@@ -44,10 +44,8 @@ namespace Day10.Models
                     }
                 }
 
-                toPrint.Add(lineToPrint);
+                Console.WriteLine(lineToPrint);
             }
-
-            Console.WriteLine(string.Join("\n", toPrint));
         }
     }
 }
