@@ -49,6 +49,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Day11_Tests.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Day9_Tests.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -77,6 +80,10 @@
     <ProjectReference Include="..\aoc-2018\Day6\Day6.csproj">
       <Project>{c452da0b-de7f-4b9c-81c0-1f19e909bff5}</Project>
       <Name>Day6</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Day11\Day11.csproj">
+      <Project>{c1b2fba8-7694-4151-92a5-fd275bdc44c6}</Project>
+      <Name>Day11</Name>
     </ProjectReference>
     <ProjectReference Include="..\Day2\Day2.csproj">
       <Project>{23595d29-567f-4975-a793-00ef3474685e}</Project>

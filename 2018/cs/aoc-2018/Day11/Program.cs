@@ -24,7 +24,7 @@ namespace Day11
             string powerLevelString = powerLevel.ToString();
             if (powerLevelString.Length > 2)
             {
-                powerLevel = Convert.ToInt32(powerLevelString[powerLevelString.Length - 3]);
+                powerLevel = Convert.ToInt32(powerLevelString[powerLevelString.Length - 3].ToString());
             }
             else
             {
