@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,11 +11,14 @@ namespace Day10.Models
     {
         public List<Point> Points { get; set; }
 
-        public int MaxX => Points.Max(p => p.InitialPosition.X);
-        public int MinX => Points.Min(p => p.InitialPosition.X);
+        public int MaxX => Points.Max(p => p.CurrentPosition.X);
+        public int MinX => Points.Min(p => p.CurrentPosition.X);
 
-        public int MaxY => Points.Max(p => p.InitialPosition.Y);
-        public int MinY => Points.Min(p => p.InitialPosition.Y);
+        public int MaxY => Points.Max(p => p.CurrentPosition.Y);
+        public int MinY => Points.Min(p => p.CurrentPosition.Y);
+
+        public int CurrentHeight => Math.Abs(MaxY - MinY);
+        public int CurrentWidth => Math.Abs(MaxX - MinX);
 
         public void ApplyVelocities()
         {
@@ -24,27 +28,42 @@ namespace Day10.Models
             }
         }
 
-        public void PrintGrid()
+        public void PrintGrid(int counter)
         {
             List<string> toPrint = new List<string>();
 
-            for (int y = MinY; y <= MaxY; y++)
+            if (CurrentHeight <= 150 && CurrentWidth <= 150)
             {
-                string lineToPrint = "";
+                Console.WriteLine($"{counter} iteration gave us something to print!");
+                Console.WriteLine($"Writing to file now");
+                string filename = $"{counter}.txt";
 
-                for (int x = MinX; x <= MaxX; x++)
+                using (var fs = File.Create(filename))
+                using (var writer = new StreamWriter(fs))
                 {
-                    if (Points.Any(p => p.CurrentPosition.X == x && p.CurrentPosition.Y == y))
+                    for (int y = MinY; y <= MaxY; y++)
                     {
-                        lineToPrint += "#";
-                    }
-                    else
-                    {
-                        lineToPrint += " ";
+                        string lineToPrint = "";
+
+                        for (int x = MinX; x <= MaxX; x++)
+                        {
+                            if (Points.Any(p => p.CurrentPosition.X == x && p.CurrentPosition.Y == y))
+                            {
+                                lineToPrint += "#";
+                            }
+                            else
+                            {
+                                lineToPrint += " ";
+                            }
+                        }
+
+                        writer.WriteLine(lineToPrint);
                     }
                 }
 
-                Console.WriteLine(lineToPrint);
+                Console.WriteLine("Finished writing file, press any key to continue");
+                Console.ReadLine();
+              
             }
         }
     }

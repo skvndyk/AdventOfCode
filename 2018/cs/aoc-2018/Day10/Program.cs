@@ -16,16 +16,17 @@ namespace Day10
             new Regex(@"position=<(?'posX'-?\d*),(?'posY'-?\d*)>velocity=<(?'velX'-?\d*),?(?'velY'-?\d*)>");
         public static void Main(string[] args)
         {
-            string fileName = "day10-2018-example.txt";
+            int counter = 0;
+            string fileName = "day10-2018.txt";
             Grid grid = ParseInputFile(fileName);
-            grid.PrintGrid();
-            Thread.Sleep(1500);
+            grid.PrintGrid(counter);
+            counter++;
             Console.Clear();
             while (true)
             {
                 grid.ApplyVelocities();
-                grid.PrintGrid();
-                Thread.Sleep(1500);
+                grid.PrintGrid(counter);
+                counter++;
                 Console.Clear();
             }
         }
@@ -68,5 +69,6 @@ namespace Day10
                 Points = points
             };
         }
+
     }
 }
