@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Day11.Models
 {
-    class PowerGrid
+    public class PowerGrid
     {
+        public List<PowerCell> PowerCells { get; set; }
     }
 }

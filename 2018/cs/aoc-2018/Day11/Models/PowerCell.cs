@@ -10,7 +10,7 @@ namespace Day11.Models
     {
         public Position TopLeftCorner { get; set; }
         public List<Position> PositionsCovered { get; set; }
-
+        public bool FullyInGrid => !PositionsCovered.Any(p => p.X < 1 || p.X > 300 || p.Y < 1 || p.Y > 300);
         public void SetPositionsCovered()
         {
             if (TopLeftCorner != null)

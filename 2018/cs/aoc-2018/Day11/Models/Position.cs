@@ -10,5 +10,9 @@ namespace Day11.Models
     {
         public int X { get; set; }
         public int Y { get; set; }
+
+        public int PowerLevel { get; set; }
+
+
     }
 }
