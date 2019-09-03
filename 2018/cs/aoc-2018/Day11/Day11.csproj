@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Position.cs" />
-    <Compile Include="Models\PowerCell.cs" />
+    <Compile Include="Models\FuelCell.cs" />
+    <Compile Include="Models\Square.cs" />
     <Compile Include="Models\PowerGrid.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -14,26 +14,6 @@ namespace Day11
             const int serialNum = 5535;
         }
 
-        public static int CalculatePowerLevel(Position pos, int serialNum)
-        {
-            int rackId = pos.X + 10;
-            int powerLevel = rackId * pos.Y;
-            powerLevel += serialNum;
-            powerLevel *= rackId;
-
-            string powerLevelString = powerLevel.ToString();
-            if (powerLevelString.Length > 2)
-            {
-                powerLevel = Convert.ToInt32(powerLevelString[powerLevelString.Length - 3].ToString());
-            }
-            else
-            {
-                powerLevel = 0;
-            }
-
-            powerLevel -= 5;
-
-            return powerLevel;
-        }
+        
     }
 }

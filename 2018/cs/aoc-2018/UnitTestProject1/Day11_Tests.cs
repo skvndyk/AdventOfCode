@@ -13,42 +13,51 @@ namespace UnitTestProject1
         [TestMethod]
         public void P0A()
         {
-            Position position = new Position() { X = 3, Y = 5 };
+            int x = 3;
+            int y = 5;
             int serialNum = 8;
             int expectedPowerLevel = 4;
 
-            Assert.AreEqual(expectedPowerLevel, Program.CalculatePowerLevel(position, serialNum));
+            FuelCell position = new FuelCell(x, y, serialNum);
+            Assert.AreEqual(expectedPowerLevel, position.PowerLevel);
         }
 
 
         [TestMethod]
         public void P1A()
         {
-            Position position = new Position() { X = 122, Y = 79 };
+            int x = 122;
+            int y = 79;
             int serialNum = 57;
             int expectedPowerLevel = -5;
 
-            Assert.AreEqual(expectedPowerLevel, Program.CalculatePowerLevel(position, serialNum));
+            FuelCell position = new FuelCell(x, y, serialNum);
+            Assert.AreEqual(expectedPowerLevel, position.PowerLevel);
+
         }
 
         [TestMethod]
         public void P1B()
         {
-            Position position = new Position() { X = 217, Y = 196 };
+            int x = 217;
+            int y = 196;
             int serialNum = 39;
             int expectedPowerLevel = 0;
 
-            Assert.AreEqual(expectedPowerLevel, Program.CalculatePowerLevel(position, serialNum));
+            FuelCell position = new FuelCell(x, y, serialNum);
+            Assert.AreEqual(expectedPowerLevel, position.PowerLevel);
         }
 
         [TestMethod]
         public void P1C()
         {
-            Position position = new Position() { X = 101, Y = 153 };
+            int x = 101;
+            int y = 153;
             int serialNum = 71;
             int expectedPowerLevel = 4;
 
-            Assert.AreEqual(expectedPowerLevel, Program.CalculatePowerLevel(position, serialNum));
+            FuelCell position = new FuelCell(x, y, serialNum);
+            Assert.AreEqual(expectedPowerLevel, position.PowerLevel);
         }
     }
 }
