@@ -12,6 +12,8 @@ namespace Day11
         public static void Main(string[] args)
         {
             const int serialNum = 5535;
+
+            PowerGrid grid = new PowerGrid(serialNum);
         }
 
         

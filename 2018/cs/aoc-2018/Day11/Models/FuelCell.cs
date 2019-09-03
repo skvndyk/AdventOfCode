@@ -13,6 +13,8 @@ namespace Day11.Models
 
         public int PowerLevel { get; set; }
 
+        public bool AssignedToSquare { get; set; }
+
         public FuelCell(int x, int y, int serialNum)
         {
             X = x;
