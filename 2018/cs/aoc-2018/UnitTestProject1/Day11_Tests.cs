@@ -59,5 +59,20 @@ namespace UnitTestProject1
             FuelCell position = new FuelCell(x, y, serialNum);
             Assert.AreEqual(expectedPowerLevel, position.PowerLevel);
         }
+
+
+        [TestMethod]
+        public void P2A()
+        {
+            int serialNum = 18;
+            int x = 33;
+            int y = 45;
+            int powerLevel = 29;
+
+            PowerGrid grid = new PowerGrid(serialNum);
+            Assert.AreEqual(x, grid.TLHighPower.X);
+            Assert.AreEqual(y, grid.TLHighPower.Y);
+            Assert.AreEqual(powerLevel, grid.HighestPoweredSquare.TotalPower);
+        }
     }
 }
