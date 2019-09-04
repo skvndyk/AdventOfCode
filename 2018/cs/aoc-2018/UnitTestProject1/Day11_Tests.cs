@@ -72,7 +72,7 @@ namespace UnitTestProject1
             PowerGrid grid = new PowerGrid(serialNum);
             Assert.AreEqual(x, grid.TLHighPower.X);
             Assert.AreEqual(y, grid.TLHighPower.Y);
-            Assert.AreEqual(powerLevel, grid.HighestPoweredSquare.TotalPower);
+            Assert.AreEqual(powerLevel, grid.HLSquare.TotalPower);
         }
     }
 }

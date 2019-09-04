@@ -41,5 +41,15 @@ namespace Day11.Models
 
             return (TopLeftCorner == square.TopLeftCorner);
         }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1095206954;
+            hashCode = hashCode * -1521134295 + EqualityComparer<FuelCell>.Default.GetHashCode(TopLeftCorner);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<FuelCell>>.Default.GetHashCode(FuelCellsCovered);
+            hashCode = hashCode * -1521134295 + FullyInGrid.GetHashCode();
+            hashCode = hashCode * -1521134295 + TotalPower.GetHashCode();
+            return hashCode;
+        }
     }
 }

@@ -9,18 +9,17 @@ namespace Day11.Models
     public class PowerGrid
     {
         public int SerialNum { get; set; }
-        public List<Square> Squares { get; set; }
+        public Square HLSquare { get; set; }
         public List<FuelCell> FuelCells { get; set; }
         public int Height = 300;
         public int Width = 300;
         public PowerGrid(int serialNum)
         {
             SerialNum = serialNum;
-            Squares = new List<Square>();
             FuelCells = new List<FuelCell>();
 
             SetFuelCells();
-            SetSquares();
+            GetHLSquare();
 
         }
 
@@ -34,7 +33,7 @@ namespace Day11.Models
                 }
             }
         }
-        private void SetSquares()
+        private void GetHLSquare()
         {
             if (FuelCells != null)
             {
@@ -47,17 +46,14 @@ namespace Day11.Models
                         if (testSquare.TotalPower > highPowerLevel)
                         {
                             highPowerLevel = testSquare.TotalPower;
-                            Squares.Add(testSquare);
-                            Squares.RemoveAll(s => s != testSquare);
+                            HLSquare = testSquare;
                         }
                     }
                 }
             }
         }
 
-        public Square HighestPoweredSquare => Squares.Where(s => s.TotalPower == Squares.Max(s2 => s2.TotalPower)).First();
-
-        public FuelCell TLHighPower => HighestPoweredSquare.TopLeftCorner;
+        public FuelCell TLHighPower => HLSquare.TopLeftCorner;
 
 
     }

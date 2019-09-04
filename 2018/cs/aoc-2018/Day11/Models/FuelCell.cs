@@ -45,5 +45,15 @@ namespace Day11.Models
 
             return (X == fuelCell.X) && (Y == fuelCell.Y);
         }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 494920130;
+            hashCode = hashCode * -1521134295 + X.GetHashCode();
+            hashCode = hashCode * -1521134295 + Y.GetHashCode();
+            hashCode = hashCode * -1521134295 + PowerLevel.GetHashCode();
+            hashCode = hashCode * -1521134295 + AssignedToSquare.GetHashCode();
+            return hashCode;
+        }
     }
 }
