@@ -38,5 +38,12 @@ namespace Day11.Models
 
             PowerLevel = powerLevel;
         }
+
+        public override bool Equals(object value)
+        {
+            FuelCell fuelCell = value as FuelCell;
+
+            return (X == fuelCell.X) && (Y == fuelCell.Y);
+        }
     }
 }

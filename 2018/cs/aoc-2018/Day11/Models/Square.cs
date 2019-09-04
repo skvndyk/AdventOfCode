@@ -34,5 +34,12 @@ namespace Day11.Models
         }
 
         public int TotalPower => FuelCellsCovered.Sum(f => f.PowerLevel);
+
+        public override bool Equals(object value)
+        {
+            Square square = value as Square;
+
+            return (TopLeftCorner == square.TopLeftCorner);
+        }
     }
 }

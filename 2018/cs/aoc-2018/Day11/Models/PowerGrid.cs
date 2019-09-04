@@ -38,11 +38,18 @@ namespace Day11.Models
         {
             if (FuelCells != null)
             {
+                int highPowerLevel = -999999999;
                 for (int x = 1; x <= Width - 2; x++)
                 {
                     for (int y = 1; y <= Height - 2; y++)
                     {
-                        Squares.Add(new Square(x, y, this));
+                        var testSquare = new Square(x, y, this);
+                        if (testSquare.TotalPower > highPowerLevel)
+                        {
+                            highPowerLevel = testSquare.TotalPower;
+                            Squares.Add(testSquare);
+                            Squares.RemoveAll(s => s != testSquare);
+                        }
                     }
                 }
             }
