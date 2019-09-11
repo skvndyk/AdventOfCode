@@ -11,8 +11,11 @@ namespace UnitTestProject1
     public class Day12_Tests
     {
         [TestMethod]
-        public void P0A()
+        public void P1()
         {
+            string initialState = "#..#.#..##......###...###";
+            string rulesFileName = "day12-2018-test.txt";
+            PotRow potRow = new PotRow(initialState, rulesFileName);
         }
 
 

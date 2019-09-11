@@ -12,7 +12,8 @@ namespace Day12
         public static void Main(string[] args)
         {
             string initialState = "#..#.#..##......###...###";
-            PotRow potRow = new PotRow(initialState);
+            string rulesFileName = "day12-p1-2018.txt";
+            PotRow potRow = new PotRow(initialState, rulesFileName);
         }
     }
 }
