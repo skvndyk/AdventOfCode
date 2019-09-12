@@ -39,9 +39,10 @@ namespace Day12.Models
             }
 
             SetRules(rulesFileName);
-            PrintRow();
             SortPots();
             HistoricalPots.Add(Pots);
+            PrintRow();
+            CurrentGeneration++;
         }
 
         private void SortPots()
@@ -87,9 +88,10 @@ namespace Day12.Models
         {
             for (int i = 1; i <= GenerationsToApply; i++)
             {
+                List<Pot> copyPots = new List<Pot>(Pots);
                 foreach (var rule in Rules)
                 {
-                    ApplyRule(rule);
+                    ApplyRule(rule, copyPots);
                 }
                 foreach (var pot in Pots)
                 {
@@ -98,9 +100,12 @@ namespace Day12.Models
                         pot.HasPlant = false;
                     }
                 }
+                Pots = copyPots;
+                SortPots();
                 HistoricalPots.Add(Pots);
                 PrintRow();
                 CurrentGeneration++;
+                ResetPotRuleStatus();
             }
         }
 
@@ -112,10 +117,8 @@ namespace Day12.Models
             }
         }
 
-        public void ApplyRule(Rule rule)
+        public void ApplyRule(Rule rule, List<Pot> copyPots)
         {
-            List<Pot> copyPots = new List<Pot>(Pots);
-
             foreach (var pot in Pots)
             {
                 List<Pot> newPots = new List<Pot>();
@@ -150,18 +153,23 @@ namespace Day12.Models
                 {
                     currPot.HasPlant = rule.HasPlantAfter;
                     currPot.AffectedByRules = true;
+                    if (!newPots.Any(np => np.HasPlant))
+                    {
+                        foreach (var newPot in newPots)
+                        {
+                            copyPots.Remove(newPot);
+                        }
+                    }
                 }
                 else
                 {
+                    //dry ;(
                     foreach (var newPot in newPots)
                     {
                         copyPots.Remove(newPot);
                     }
                 }
             }
-
-            Pots = copyPots;
         }
-
     }
 }
