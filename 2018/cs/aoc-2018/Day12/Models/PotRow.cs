@@ -15,13 +15,20 @@ namespace Day12.Models
         public Dictionary<bool, char> ReverseMapper = new Dictionary<bool, char>() { { true, '#' }, { false, '.' } };
         public List<Rule> Rules { get; set; }
         public List<Pot> Pots { get; set; }
+        public List<List<Pot>> HistoricalPots { get; set; }
 
         public int CurrentGeneration { get; set; }
+        public int GenerationsToApply { get; set; } = 20;
 
-        public PotRow(string initialState, string rulesFileName)
+        public PotRow(string initialState, string rulesFileName, int? generationsToApply = null )
         {
             CurrentGeneration = 0;
             Rules = new List<Rule>();
+            HistoricalPots = new List<List<Pot>>();
+            if (generationsToApply != null)
+            {
+                GenerationsToApply = (int) generationsToApply;
+            }
 
             Pots = new List<Pot>();
             int i = 0;
@@ -33,13 +40,20 @@ namespace Day12.Models
 
             SetRules(rulesFileName);
             PrintRow();
+            SortPots();
+            HistoricalPots.Add(Pots);
+        }
+
+        private void SortPots()
+        {
+            Pots = Pots.OrderBy(p => p.Number).ToList();
         }
 
         public void PrintRow()
         {
-           string rowContents = string.Concat(Pots.Select(p => ReverseMapper[p.HasPlant]));
+            string rowContents = string.Concat(Pots.Select(p => ReverseMapper[p.HasPlant]));
             //todo fix spacing on this for 2 digit gens
-           Console.WriteLine($"{CurrentGeneration}: {rowContents}");
+            Console.WriteLine($"{CurrentGeneration}: {rowContents}");
         }
 
         public void SetRules(string rulesFileName)
@@ -68,5 +82,86 @@ namespace Day12.Models
 
             return rule;
         }
+
+        public void ApplyRules()
+        {
+            for (int i = 1; i <= GenerationsToApply; i++)
+            {
+                foreach (var rule in Rules)
+                {
+                    ApplyRule(rule);
+                }
+                foreach (var pot in Pots)
+                {
+                    if (!pot.AffectedByRules)
+                    {
+                        pot.HasPlant = false;
+                    }
+                }
+                HistoricalPots.Add(Pots);
+                PrintRow();
+                CurrentGeneration++;
+            }
+        }
+
+        private void ResetPotRuleStatus()
+        {
+            foreach (var pot in Pots)
+            {
+                pot.AffectedByRules = false;
+            }
+        }
+
+        public void ApplyRule(Rule rule)
+        {
+            List<Pot> copyPots = new List<Pot>(Pots);
+
+            foreach (var pot in Pots)
+            {
+                List<Pot> newPots = new List<Pot>();
+                var currPot = copyPots.Where(cp => cp.Number == pot.Number).First();
+                bool ruleMatches = true;
+                //see if rule applies to current pot and its neighbors
+                foreach (var pos in rule.Parms.Keys.AsEnumerable())
+                {
+                    int potNumToConsider = pot.Number + pos;
+
+                    if (!copyPots.Any(p => p.Number == potNumToConsider))
+                    {
+                        //temporarily add outlier pots
+                        var newPot = new Pot(potNumToConsider, false);
+                        copyPots.Add(newPot);
+                        newPots.Add(newPot);
+                        SortPots();
+                    }
+
+                    if (copyPots.Exists(p => p.Number == potNumToConsider))
+                    {
+                        var potInQuestion = copyPots.Where(p => p.Number == potNumToConsider).First();
+                        if (potInQuestion.HasPlant != rule.Parms[pos])
+                        {
+                            ruleMatches = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (ruleMatches)
+                {
+                    currPot.HasPlant = rule.HasPlantAfter;
+                    currPot.AffectedByRules = true;
+                }
+                else
+                {
+                    foreach (var newPot in newPots)
+                    {
+                        copyPots.Remove(newPot);
+                    }
+                }
+            }
+
+            Pots = copyPots;
+        }
+
     }
 }

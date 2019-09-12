@@ -16,6 +16,7 @@ namespace UnitTestProject1
             string initialState = "#..#.#..##......###...###";
             string rulesFileName = "day12-2018-test.txt";
             PotRow potRow = new PotRow(initialState, rulesFileName);
+            potRow.ApplyRules();
         }
 
 
