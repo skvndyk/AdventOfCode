@@ -18,7 +18,7 @@ namespace Day12.Models
         public List<List<Pot>> HistoricalPots { get; set; }
 
         public int CurrentGeneration { get; set; }
-        public int GenerationsToApply { get; set; } = 20;
+        public int GenerationsToApply { get; set; } = 1;
 
         public PotRow(string initialState, string rulesFileName, int? generationsToApply = null )
         {
@@ -93,17 +93,17 @@ namespace Day12.Models
                 {
                     ApplyRule(rule, copyPots);
                 }
-                foreach (var pot in Pots)
+                foreach (var copyPot in copyPots)
                 {
-                    if (!pot.AffectedByRules)
+                    if (!copyPot.AffectedByRules)
                     {
-                        pot.HasPlant = false;
+                        copyPot.HasPlant = false;
                     }
                 }
                 Pots = copyPots;
                 SortPots();
                 HistoricalPots.Add(Pots);
-                PrintRow();
+                //PrintRow();
                 CurrentGeneration++;
                 ResetPotRuleStatus();
             }
@@ -119,6 +119,9 @@ namespace Day12.Models
 
         public void ApplyRule(Rule rule, List<Pot> copyPots)
         {
+            string toPrint = string.Concat(rule.Parms.Values.Select(v => ReverseMapper[v]).ToList());
+            Console.WriteLine($"Rule: {toPrint}");
+
             foreach (var pot in Pots)
             {
                 List<Pot> newPots = new List<Pot>();
