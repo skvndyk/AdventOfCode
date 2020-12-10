@@ -12,8 +12,12 @@ namespace Day1_2020
         public static void Main(string[] args)
         {
             var lines = Common.Utilities.ReadFileToStrings(Path.GetFullPath("day1-2020.txt"));
-            var pair = FindPair(lines);
-            Console.WriteLine($"Part 1: {pair[0]} * {pair[1]} = {pair[0] * pair[1]}");
+            //var pair = FindPair(lines);
+            //Console.WriteLine($"Part 1: {pair[0]} * {pair[1]} = {pair[0] * pair[1]}");
+
+            var triplet = FindTriplet(lines);
+            Console.WriteLine($"Part 2: {triplet[0]} * {triplet[1]} * {triplet[2]} = {triplet[0] * triplet[1] * triplet[2]}");
+
             Console.Read();
         }
 
@@ -39,6 +43,35 @@ namespace Day1_2020
                 }
             }
             return pair;
+        }
+
+        public static List<int> FindTriplet(List<string> lines)
+        {
+            int desiredSum = 2020;
+            var triplet = new List<int>();
+            var intLines = lines.Select(l => Convert.ToInt32(l)).ToList();
+
+            bool foundTriplet = false;
+            for (int i = 0; i < intLines.Count; i++)
+            {
+                for (int j = 0; j < intLines.Count - 1; j++)
+                {
+                    for (int k = 0; k < intLines.Count - 2; k++)
+                    {
+                        if (foundTriplet) break;
+
+                        if (intLines[i] + intLines[j] + intLines[k] == desiredSum)
+                        {
+                            triplet.Add(intLines[i]);
+                            triplet.Add(intLines[j]);
+                            triplet.Add(intLines[k]);
+                            foundTriplet = true;
+                        }
+                    }
+                    
+                }
+            }
+            return triplet;
         }
     }
 }
