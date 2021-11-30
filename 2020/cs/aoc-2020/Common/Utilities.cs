@@ -13,6 +13,10 @@ namespace Common
         public static List<string> ReadFileToStrings(string filePath)
         {
             var stringArr = File.ReadAllLines(filePath);
+            foreach (var str in stringArr)
+            {
+                str.Trim();
+            }
             return stringArr.ToList();
         }
 
