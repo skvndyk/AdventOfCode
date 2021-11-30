@@ -21,11 +21,13 @@ namespace Day2_2020
         {
             var exFilePath = "day2-ex-2020.txt";
             var filePath = "day2-2020.txt";
-            ParseInputFile(exFilePath);
+            Console.WriteLine($@"Part 1: {ParseInputFile1(filePath)} matching passwords");
+            Console.ReadLine();
         }
 
-        public static void ParseInputFile(string filePath)
+        public static int ParseInputFile1(string filePath)
         {
+            int numMatchingPasswords = 0;
             var exLines = Common.Utilities.ReadFileToStrings(filePath);
             foreach (var line in exLines)
             {
@@ -33,8 +35,14 @@ namespace Day2_2020
                 foreach (Match match in matches)
                 {
                     var passwordRule = new PasswordRule(match);
+                    var numRepetitions = passwordRule.Password.Count(l => l == passwordRule.RequiredLetter.ToCharArray()[0]);
+                    if (numRepetitions >= passwordRule.MinRepetition && numRepetitions <= passwordRule.MaxRepetition)
+                    {
+                        numMatchingPasswords++;
+                    }
                 }
             }
+            return numMatchingPasswords;
         }
 
         public class PasswordRule
