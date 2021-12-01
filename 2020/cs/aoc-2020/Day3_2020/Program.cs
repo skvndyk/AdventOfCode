@@ -22,6 +22,10 @@ namespace Day3_2020
         {
             var grid = new Grid(rise, run);
             Setup(inputLines, grid);
+            while (grid.TobogganSquare.YCoord < grid.Rows.Count -1)
+            {
+                grid.MoveToboggan();
+            }
             
         }
 
@@ -38,7 +42,7 @@ namespace Day3_2020
 
                 foreach (var symbol in line)
                 {
-                    row.Squares.Add(new Square()
+                    row.OriginalSquares.Add(new Square()
                     {
                         XCoord = colCtr,
                         YCoord = rowCtr,
@@ -47,37 +51,83 @@ namespace Day3_2020
                     colCtr++;
                 }
 
+                var list = new List<Square>();
+                row.CurrentSquares = row.OriginalSquares.Select(s => s.Copy()).ToList();
                 Console.WriteLine(row.ToString());
                 grid.Rows.Add(row);
                 rowCtr++;
             }
+
+            grid.TobogganSquare = grid.GetSquareByCoordinates(0, 0);
         }
 
 
-        private static void ApplySlope(Grid grid)
-        {
-
-        }
 
         public class Grid
         {
             public List<Row> Rows { get; set; }
             public int Rise { get; set; }
             public int Run { get; set; }
-
+            public Square TobogganSquare { get; set; }
+            public int TreesEncountered { get; set; }
+            public int TobogganCounter { get; set; }
             public Grid(int rise, int run)
             {
                 Rise = rise;
                 Run = run;
                 Rows = new List<Row>();
+                TreesEncountered = 0;
+                TobogganCounter = 0;
+            }
+
+            public Square GetSquareByCoordinates(int xCoord, int yCoord)
+            {
+                var targetRow = Rows[yCoord];
+                while (targetRow.CurrentSquares.Count < xCoord)
+                {
+                    targetRow.ExtendRow();
+                }
+                return targetRow.CurrentSquares[xCoord];
+            }
+
+            public void MoveToboggan()
+            {
+                TobogganSquare = GetSquareByCoordinates(TobogganSquare.XCoord + Rise, TobogganSquare.YCoord + Run);
+                switch (TobogganSquare.Contents)
+                {
+                    case '.':
+                        TobogganSquare.Contents = 'O';
+                        break;
+                    case '#':
+                        TobogganSquare.Contents = 'X';
+                        TreesEncountered++;
+                        break;
+                }
+                TobogganCounter++;
+                Console.Clear();
+                Console.WriteLine($@"Step {TobogganCounter}");
+                Rows.ForEach(r => Console.WriteLine(r.ToString()));
+                //Console.ReadLine();
             }
         }
 
         public class Row
         {
             public int RowNum { get; set; }
-            public List<Square> Squares { get; set; } = new List<Square>();
-            public override string ToString() => new string(Squares.Select(s => s.Contents).ToArray());
+            public List<Square> CurrentSquares { get; set; } = new List<Square>();
+            public List<Square> OriginalSquares { get; set; } = new List<Square>();
+            public override string ToString() => new string(CurrentSquares.Select(s => s.Contents).ToArray());
+            public void ExtendRow()
+            {
+                var xCoordStart = CurrentSquares.Count + 1;
+                foreach (var square in OriginalSquares)
+                {
+                    var newSquare = square.Copy();
+                    newSquare.XCoord = xCoordStart;
+                    CurrentSquares.Add(newSquare);
+                    xCoordStart++;
+                }
+            }
         }
 
         public class Square
@@ -85,14 +135,17 @@ namespace Day3_2020
             public int XCoord { get; set; }
             public int YCoord { get; set; }
             public char Contents { get; set; }
-            public Annotation Annotation = Annotation.None;
+
+            public Square Copy()
+            {
+                return new Square
+                {
+                    XCoord = XCoord,
+                    YCoord = YCoord,
+                    Contents = Contents
+                };
+            }
         }
 
-        public class Slope
-        {
-            int Rise { get; set; }
-            int Run { get; set; }
-        }
-        public enum Annotation { None, X, O }
     }
 }
