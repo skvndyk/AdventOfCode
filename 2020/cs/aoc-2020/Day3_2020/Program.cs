@@ -20,7 +20,7 @@ namespace Day3_2020
 
         private static void ParseInputFile1(List<string> inputLines, int rise, int run)
         {
-            var grid = new Grid();
+            var grid = new Grid(rise, run);
             Setup(inputLines, grid);
             
         }
@@ -61,7 +61,7 @@ namespace Day3_2020
 
         public class Grid
         {
-            public List<Row> Rows { get; set; } = new List<Row>();
+            public List<Row> Rows { get; set; }
             public int Rise { get; set; }
             public int Run { get; set; }
 
@@ -69,6 +69,7 @@ namespace Day3_2020
             {
                 Rise = rise;
                 Run = run;
+                Rows = new List<Row>();
             }
         }
 
