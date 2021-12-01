@@ -10,15 +10,15 @@ namespace Day3_2020
         {
             var exFilePath = "day3-ex-2020.txt";
             var filePath = "day3-2020.txt";
-            int rise = 3;
-            int run = 1;
-            var inputLines = Common.Utilities.ReadFileToStrings(exFilePath);
+            int rise = 1;
+            int run = 3;
+            var inputLines = Common.Utilities.ReadFileToStrings(filePath);
             ParseInputFile1(inputLines, rise, run);
-            //Console.WriteLine($@"Part 2: {ParseInputFile2(inputLines)}");
+            Console.WriteLine($@"Part 2: {ParseInputFile1(inputLines, rise, run)} trees encountered");
             Console.ReadLine();
         }
 
-        private static void ParseInputFile1(List<string> inputLines, int rise, int run)
+        private static int ParseInputFile1(List<string> inputLines, int rise, int run)
         {
             var grid = new Grid(rise, run);
             Setup(inputLines, grid);
@@ -26,6 +26,7 @@ namespace Day3_2020
             {
                 grid.MoveToboggan();
             }
+            return grid.TreesEncountered;
             
         }
 
@@ -53,8 +54,12 @@ namespace Day3_2020
 
                 var list = new List<Square>();
                 row.CurrentSquares = row.OriginalSquares.Select(s => s.Copy()).ToList();
-                Console.WriteLine(row.ToString());
+
+                //optional writing to console
+
+                //Console.WriteLine(row.ToString());
                 grid.Rows.Add(row);
+
                 rowCtr++;
             }
 
@@ -83,7 +88,7 @@ namespace Day3_2020
             public Square GetSquareByCoordinates(int xCoord, int yCoord)
             {
                 var targetRow = Rows[yCoord];
-                while (targetRow.CurrentSquares.Count < xCoord)
+                while (targetRow.CurrentSquares.Count <= xCoord)
                 {
                     targetRow.ExtendRow();
                 }
@@ -92,7 +97,7 @@ namespace Day3_2020
 
             public void MoveToboggan()
             {
-                TobogganSquare = GetSquareByCoordinates(TobogganSquare.XCoord + Rise, TobogganSquare.YCoord + Run);
+                TobogganSquare = GetSquareByCoordinates(TobogganSquare.XCoord + Run, TobogganSquare.YCoord + Rise);
                 switch (TobogganSquare.Contents)
                 {
                     case '.':
@@ -104,9 +109,12 @@ namespace Day3_2020
                         break;
                 }
                 TobogganCounter++;
-                Console.Clear();
-                Console.WriteLine($@"Step {TobogganCounter}");
-                Rows.ForEach(r => Console.WriteLine(r.ToString()));
+
+                //optional writing to console
+
+                //Console.Clear();
+                //Console.WriteLine($@"Step {TobogganCounter}");
+                //Rows.ForEach(r => Console.WriteLine(r.ToString()));
                 //Console.ReadLine();
             }
         }
@@ -119,7 +127,7 @@ namespace Day3_2020
             public override string ToString() => new string(CurrentSquares.Select(s => s.Contents).ToArray());
             public void ExtendRow()
             {
-                var xCoordStart = CurrentSquares.Count + 1;
+                var xCoordStart = CurrentSquares.Count;
                 foreach (var square in OriginalSquares)
                 {
                     var newSquare = square.Copy();
