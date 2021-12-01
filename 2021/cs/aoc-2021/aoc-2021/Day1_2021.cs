@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace aoc_2021
@@ -12,7 +13,8 @@ namespace aoc_2021
             List<string> inputStrings = Common.Utilities.ReadFileToStrings(filePath);
 
             //count the number of times a depth measurement increases from the previous measurement
-            Console.WriteLine($@"Part 1 Answer:{ParseInputLinesPart1(inputStrings)}");
+            //Console.WriteLine($@"Part 1 Answer:{ParseInputLinesPart1(inputStrings)}");
+            Console.WriteLine($@"Part 2 Answer:{ParseInputLinesPart2(inputStrings)}");
             Console.ReadLine();
         }
 
@@ -20,19 +22,35 @@ namespace aoc_2021
         {
             var depths = GetIntsFromInputStrings(inputStrings);
             var increaseCtr = 0;
-            var depthCtr = 0;
-            var prevDepth = depths[0];
-            foreach (var depth in depths)
+     
+            for (int i = 1; i < depths.Count; i++)
             {
-                if (depth > prevDepth)
+                if (depths[i] > depths[i-1])
+                {
+                    increaseCtr++;
+                }
+            }
+           
+            return increaseCtr;
+        }
+
+        private static int ParseInputLinesPart2(List<string> inputStrings)
+        {
+            var depths = GetIntsFromInputStrings(inputStrings);
+            var increaseCtr = 0;
+            int prevDepthSum = 999999999;
+
+            for (int i = 0; i < depths.Count - 2; i++)
+            {
+                var windowSum = depths.GetRange(i, 3).Sum();
+                if (windowSum > prevDepthSum)
                 {
                     increaseCtr++;
                 }
 
-                prevDepth = depths[depthCtr];
-                depthCtr++;
- 
+                prevDepthSum = windowSum;
             }
+           
             return increaseCtr;
         }
 
