@@ -109,7 +109,7 @@ namespace Day4_2021
                 return AllSquares.Where(s => s.XCoord == x && s.YCoord == y).First();
             }
 
-            public Square GetSquareByContents(int contents) { return AllSquares.First(s => s.Contents == contents); }
+            public Square GetSquareByContents(int contents) { return AllSquares.FirstOrDefault(s => s.Contents == contents) ?? null; }
 
             public void SetRow(int rowNum, List<int> rowContents)
             {
@@ -153,7 +153,13 @@ namespace Day4_2021
             }
             public void ApplyStep(int step)
             {
-                GetSquareByContents(step).IsMarked = true;
+                var square = GetSquareByContents(step);
+                if (square == null)
+                {
+                    return;
+                }
+
+                square.IsMarked = true;
 
                 if (CheckBoardForWinner())
                 {
