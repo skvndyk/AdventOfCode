@@ -14,8 +14,8 @@ namespace Day4_2021
             string filePath = "day4-2021.txt";
             string exFilePath = "day4-ex-2021.txt";
             List<string> inputStrings = Common.Utilities.ReadFileToStrings(filePath);
-            Console.WriteLine($@"Part 1 Answer:{ParseInputLinesPart1(inputStrings)}");
-            //ParseInputLinesPart2(inputStrings);
+            //Console.WriteLine($@"Part 1 Answer:{ParseInputLinesPart1(inputStrings)}");
+            Console.WriteLine($@"Part 2 Answer:{ParseInputLinesPart2(inputStrings)}");
             Console.ReadLine();
         }
 
@@ -45,7 +45,37 @@ namespace Day4_2021
 
                 }
             }
-            throw new NotImplementedException();
+            return 0;
+        }
+
+        public static int ParseInputLinesPart2(List<string> inputStrings)
+        {
+            int winningStep = 0;
+            var game = ParseInput(inputStrings);
+            foreach (var step in game.Steps)
+            {
+                foreach (var b in game.Boards)
+                {
+                    b.ApplyStep(step);
+                    if (b.IsWinningBoard)
+                    {
+                        winningStep = step;
+                        game.WinningBoards.Add(b);
+
+                    }
+                }
+
+                var winningBoards = game.Boards.Where(b => b.IsWinningBoard);
+                if (winningBoards?.Any() == true)
+                {
+                    game.Boards.RemoveAll(b => winningBoards.Contains(b));
+                }
+            }
+
+            var lastWinningBoard = game.WinningBoards.Last();
+            var unmarkedSquaresSum = lastWinningBoard.AllSquares.Where(s => !lastWinningBoard.MarkedSquares.Contains(s)).Sum(s => s.Contents);
+            return unmarkedSquaresSum * winningStep;
+
         }
 
         public static Game ParseInput(List<string> inputStrings)
@@ -56,7 +86,7 @@ namespace Day4_2021
             var game = new Game(rawSteps);
 
             var rawBoards = new List<List<int>>();
-            var board = new Board();
+            var board = new Board(0);
             var rowNum = 0;
             for (int i = 2; i < inputStrings.Count; i++)
             {
@@ -71,7 +101,7 @@ namespace Day4_2021
                 else
                 {
                     game.Boards.Add(board);
-                    board = new Board();
+                    board = new Board(game.Boards.Count);
                     rowNum = 0;
                 }
             }
@@ -84,22 +114,26 @@ namespace Day4_2021
         {
             public List<int> Steps { get; set; }
             public List<Board> Boards { get; set; }
+            public List<Board> WinningBoards { get; set; }
 
             public Game(List<int> rawSteps, int? boardLength=5)
             {
                 Steps = rawSteps;
                 Boards = new List<Board>();
+                WinningBoards = new List<Board>();
             }
         }
 
         public class Board
         {
+            public int Id { get; set; }
             public List<Square> AllSquares { get; set; }
             public IEnumerable<Square> MarkedSquares => AllSquares.Where(s => s.IsMarked);
             public int SideLength { get; set; }
             public bool IsWinningBoard { get; set; } = false;
-            public Board(int? sideLength=5)
+            public Board(int id, int? sideLength=5)
             {
+                Id = id;
                 SideLength = sideLength ?? 5;
                 AllSquares = new List<Square>();
             }
@@ -145,11 +179,9 @@ namespace Day4_2021
                             }
                         }
                     }
-                   
-                    return foundWinner;
                 }
                
-                return false;
+                return foundWinner;
             }
             public void ApplyStep(int step)
             {
