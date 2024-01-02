@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AoC2023.Day1
 {
-    class Program
+    class Day1_Program
     {
         static void Main(string[] args)
         {
