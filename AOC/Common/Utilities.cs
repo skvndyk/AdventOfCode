@@ -14,8 +14,7 @@ namespace Common
         {
             var root = Directory.GetCurrentDirectory();
             var stringArr = File.ReadAllLines(Path.Combine(root, filePath));
-            var blah = "blah";
-  
+ 
             return stringArr.ToList();
         }
 
