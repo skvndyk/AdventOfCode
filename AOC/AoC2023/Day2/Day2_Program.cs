@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AoC2023.Day1
@@ -17,7 +18,7 @@ namespace AoC2023.Day1
             var inputStrings = Common.Utilities.ReadFileToStrings(filePath);
 
             Console.WriteLine($"Part 1 example answer: {Part1(exInputStrings1)}");
-            Console.WriteLine($"Part 2 example answer: {Part2(exInputStrings2)}");
+            //Console.WriteLine($"Part 2 example answer: {Part2(exInputStrings2)}");
 
             Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
             Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
@@ -25,8 +26,24 @@ namespace AoC2023.Day1
 
         private static int Part1(List<string> inputStrings)
         {
+            var redCubeMax = 12;
+            var greenCubeMax = 13;
+            var blueCubeMax = 14;
+
             var gamesDetailsList = StringsToGameDetailsList(inputStrings);
-            return 0;
+            var validGamesIdTotal = 0;
+
+            foreach (var gameDetails in gamesDetailsList)
+            {
+                if (gameDetails.MaxGreenCubeCount <= greenCubeMax
+                    && gameDetails.MaxRedCubeCount <= redCubeMax
+                    && gameDetails.MaxBlueCubeCount <= blueCubeMax)
+                {
+                    validGamesIdTotal += gameDetails.Id;
+                }
+            }
+
+            return validGamesIdTotal;
         }
 
         private static int Part2(List<string> inputStrings)
@@ -39,6 +56,9 @@ namespace AoC2023.Day1
         {
             public int Id { get; set; }
             public List<Subset> Subsets = new List<Subset>();
+            public int MaxRedCubeCount => Subsets.Select(x => x.RedCubeCount).Max();
+            public int MaxGreenCubeCount => Subsets.Select(x => x.GreenCubeCount).Max();
+            public int MaxBlueCubeCount => Subsets.Select(x => x.BlueCubeCount).Max();
         } 
 
         class Subset
