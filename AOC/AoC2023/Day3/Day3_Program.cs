@@ -27,7 +27,6 @@ namespace AoC2023.Day1
         private static int Part1(List<string> inputStrings)
         {
             var schematic = InputStringsToSchematic(inputStrings);
-            schematic.DrawSchematic();
             schematic.PopulateDigitPointGroups();
 
             var total = 0;
@@ -35,7 +34,7 @@ namespace AoC2023.Day1
             {
                 if (schematic.IsPointGroupAdjacentToSymbol(pointGroup))
                 {
-                    total += PointGroupToInt(pointGroup);
+                    total += PointGroupToInt(pointGroup.Points);
                 }
             }
             return total;
@@ -43,7 +42,32 @@ namespace AoC2023.Day1
 
         private static int Part2(List<string> inputStrings)
         {
-            return 0;
+            var schematic = InputStringsToSchematic(inputStrings);
+            schematic.PopulateDigitPointGroups();
+
+            //get point groups adjacent to gears
+            var gears = schematic.Points.Where(p => p.IsGear).ToList();
+            var totalList = new List<int>();
+            var total = 0;
+            foreach (var gear in gears)
+            {
+                var digitPointGroups = schematic.GetDigitPointGroupsAdjacentToGear(gear);
+                if (digitPointGroups.Count == 2)
+                {
+                    foreach (var group in digitPointGroups)
+                    {
+                        totalList.Add(PointGroupToInt(group.Points));
+                    }
+                }
+
+                if (totalList.Count > 0)
+                {
+                    total += totalList.Aggregate((a,x) => a * x);
+                    totalList = new List<int>();
+                }
+            }
+            
+            return total;
         }
 
         private static int PointGroupToInt(List<Point> pointGroup)
@@ -86,8 +110,8 @@ namespace AoC2023.Day1
             public List<Point> Points { get; set; } = new List<Point>();
             public int XMax => Points.Select(p => p.X).Max();
             public int YMax => Points.Select(p => p.Y).Max();
-            public IEnumerable<IGrouping<int, Point>> PointGroups => Points.GroupBy(p => p.Y);
-            public List<List<Point>> DigitPointGroups = new List<List<Point>>();
+            public IEnumerable<IGrouping<int, Point>> PointGroupingsByRow => Points.GroupBy(p => p.Y);
+            public List<PointGroup> DigitPointGroups = new List<PointGroup>();
 
             public Point GetPointByCoordinates(int x, int y)
             {
@@ -106,39 +130,27 @@ namespace AoC2023.Day1
                 }
             }
 
-            public Point GetPreviousPointInRow(Point point)
-            {
-                var nextXCoord = point.X--;
-                if (nextXCoord >= 0)
-                {
-                    return GetPointByCoordinates(nextXCoord, point.Y);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
             public void PopulateDigitPointGroups()
             {
-                foreach (var pointGroup in PointGroups)
+                foreach (var pointGroup in PointGroupingsByRow)
                 {
-                    DigitPointGroups.AddRange(GetPointGroupsForRow(pointGroup.FirstOrDefault(p => p.X == 0)));
+                    DigitPointGroups.AddRange(GetDigitPointGroupsForRow(pointGroup.FirstOrDefault(p => p.X == 0)));
                 }
             }
 
-            private List<List<Point>> GetPointGroupsForRow(Point point)
+            private List<PointGroup> GetDigitPointGroupsForRow(Point point)
             {
-                var bigPointGroup = new List<List<Point>>();
+                var id = 0;
+                var bigPointGroup = new List<PointGroup>();
 
                 var currXCoord = point.X;
                 var currPoint = point;
                 while (currPoint != null && currXCoord <= XMax)
                 {
-                    var pointGroup = new List<Point>();
+                    var pointGroup = new PointGroup(id);
                     while (currPoint != null && currPoint.IsDigit && currXCoord <= XMax)
                     {
-                        pointGroup.Add(currPoint);
+                        pointGroup.Points.Add(currPoint);
                         currPoint = GetNextPointInRow(currPoint);
                         if (currPoint != null)
                         {
@@ -147,9 +159,10 @@ namespace AoC2023.Day1
                         
                     }
 
-                    if (pointGroup.Count > 0)
+                    if (pointGroup.Points.Count > 0)
                     {
                         bigPointGroup.Add(pointGroup);
+                        id++;
                     }
                     
                     if (currPoint != null)
@@ -212,21 +225,43 @@ namespace AoC2023.Day1
 
             public void DrawSchematic()
             {
-                foreach (var pointGroup in PointGroups)
+                foreach (var pointGroup in PointGroupingsByRow)
                 {
                     var pointList = pointGroup.ToList();
                     Console.WriteLine(string.Join(string.Empty,pointList.Select(x => x.Contents)));
                 }
             }
 
-            public bool IsPointGroupAdjacentToSymbol(List<Point> pointGroup)
+            public bool IsPointGroupAdjacentToSymbol(PointGroup pointGroup)
             {
-                foreach (var point in pointGroup)
+                foreach (var point in pointGroup.Points)
                 {
                     if(GetAdjacentPoints(point).Any(p => p.IsSymbol))
                         return true;
                 }
                 return false;
+            }
+
+            public HashSet<PointGroup> GetDigitPointGroupsAdjacentToGear(Point gear)
+            {
+                var uniquePointGroups = new HashSet<PointGroup>();
+                var adjacentPoints = GetAdjacentPoints(gear).Where(g => g.IsDigit);
+                foreach (var ap in adjacentPoints)
+                {
+                    var digitPointGroup = GetDigitPointGroupByPoint(ap);
+                    if (digitPointGroup != null)
+                    {
+                        uniquePointGroups.Add(digitPointGroup);
+                    }
+                }
+           
+                return uniquePointGroups;
+            }
+
+            public PointGroup GetDigitPointGroupByPoint(Point point)
+            {
+                var digitPointGroup = DigitPointGroups.Where(p => p.Points.Contains(point)).ToList();
+                return digitPointGroup.Count > 0 ? digitPointGroup[0] : null;
             }
 
         }
@@ -239,9 +274,22 @@ namespace AoC2023.Day1
             public char Contents { get; set; }
             public bool IsSymbol => !int.TryParse(Contents.ToString(), out int _) && Contents != '.';
             public bool IsDigit => Common.Utilities.IsCharDigit(Contents).IsDigit;
+            public bool IsGear => Contents == '*';
             public int GetIntValueFromContents => !IsDigit ? -1 : (int)Common.Utilities.IsCharDigit(Contents).DigitValue;
-            public List<Point> SiblingDigitPoints { get; set; }
         }
+
+        public class PointGroup
+        {
+            public int Id {get; set;}
+            public List<Point> Points = new List<Point>();
+
+            public PointGroup (int id)
+            {
+                Id = id;
+            }
+        }
+
+
         #endregion
     }
 }
