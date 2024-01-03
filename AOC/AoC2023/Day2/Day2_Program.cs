@@ -18,7 +18,7 @@ namespace AoC2023.Day1
             var inputStrings = Common.Utilities.ReadFileToStrings(filePath);
 
             Console.WriteLine($"Part 1 example answer: {Part1(exInputStrings1)}");
-            //Console.WriteLine($"Part 2 example answer: {Part2(exInputStrings2)}");
+            Console.WriteLine($"Part 2 example answer: {Part2(exInputStrings2)}");
 
             Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
             Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
@@ -48,7 +48,15 @@ namespace AoC2023.Day1
 
         private static int Part2(List<string> inputStrings)
         {
-           return 0;
+           var gamesDetailsList = StringsToGameDetailsList(inputStrings);
+           var powerSum = 0;
+
+            foreach (var gameDetails in gamesDetailsList)
+            {
+                powerSum += gameDetails.MaxPower;
+            }
+
+            return powerSum;
         }
 
         #region lil classes
@@ -59,6 +67,7 @@ namespace AoC2023.Day1
             public int MaxRedCubeCount => Subsets.Select(x => x.RedCubeCount).Max();
             public int MaxGreenCubeCount => Subsets.Select(x => x.GreenCubeCount).Max();
             public int MaxBlueCubeCount => Subsets.Select(x => x.BlueCubeCount).Max();
+            public int MaxPower => MaxRedCubeCount * MaxGreenCubeCount * MaxBlueCubeCount;
         } 
 
         class Subset
