@@ -18,7 +18,7 @@ namespace Common
             return stringArr.ToList();
         }
 
-        public static (bool, int?) IsCharDigit(char character)
+        public static (bool IsDigit, int? DigitValue) IsCharDigit(char character)
         {
             return (int.TryParse(character.ToString(), out int parsedInt), parsedInt);
         }
