@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AoC2023.Day1
+namespace AoC2023.Day2
 {
     class Day2_Program
     {

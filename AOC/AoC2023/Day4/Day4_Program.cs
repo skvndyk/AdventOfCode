@@ -17,10 +17,10 @@ namespace AoC2023.Day1
             var exInputStrings2 = Common.Utilities.ReadFileToStrings(exFilePath2);
             var inputStrings = Common.Utilities.ReadFileToStrings(filePath);
 
-            //Console.WriteLine($"Part 1 example answer: {Part1(exInputStrings1)}");
+            Console.WriteLine($"Part 1 example answer: {Part1(exInputStrings1)}");
             Console.WriteLine($"Part 2 example answer: {Part2(exInputStrings2)}");
 
-            //Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
+            Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
             Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
         }
 
