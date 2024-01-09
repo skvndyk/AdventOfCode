@@ -43,12 +43,14 @@ namespace AoC2023.Day1
             return almanac.InputSeeds.Min(s => s.Location);
         }
 
-        private static int Part2(List<string> inputStrings)
+        private static long Part2(List<string> inputStrings)
         {
-            return 0;
+            var almanac = InputStringsToAlmanac(inputStrings, true);
+            almanac.IdkSetSomeSeeds();
+            return almanac.InputSeeds.Min(s => s.Location);
         }
 
-        private static Almanac InputStringsToAlmanac(List<string> inputStrings)
+        private static Almanac InputStringsToAlmanac(List<string> inputStrings, bool isPartTwo = false)
         {
             var almanac = new Almanac();
             var processingQueue = new Queue<string>();
@@ -63,7 +65,10 @@ namespace AoC2023.Day1
             var seedMatches = seedRegex.Matches(seedLine);
             var seedGroup = seedMatches[0].Groups[2];
 
-            almanac.SetInputSeeds(seedGroup.Value.Split(" ").Select(Int64.Parse).ToList());
+            if (isPartTwo)
+                almanac.SetRangedInputSeeds(seedGroup.Value.Split(" ").Select(Int64.Parse).ToList());
+            else
+                almanac.SetInputSeeds(seedGroup.Value.Split(" ").Select(Int64.Parse).ToList());
 
             foreach (var (source, destination) in mappingList)
             {
@@ -117,6 +122,29 @@ namespace AoC2023.Day1
             public void SetInputSeeds(List<long> seedInts)
             {
                 InputSeeds = seedInts.Select(x => new Seed(x)).ToList();
+
+            }
+
+            internal void SetRangedInputSeeds(List<long> list)
+            {
+                for (int i = 0; i <= list.Count - 2; i += 2)
+                {
+                    var startSeed = list[i];
+                    var rangeNum = list[i+1];
+                    var range = CreateRange(startSeed, rangeNum).ToList();
+                    InputSeeds.AddRange(range.Select(x => new Seed(x)).ToList());
+                }
+            }
+
+            //https://stackoverflow.com/a/49886458
+            public IEnumerable<long> CreateRange(long start, long count)
+            {
+                var limit = start + count;
+                while (start < limit)
+                {
+                    yield return start;
+                    start++;
+                }
             }
 
             public void IdkSetSomeSeeds()
@@ -253,9 +281,6 @@ namespace AoC2023.Day1
                         seed.Location = seed.Humidity;
                     }
                 }
-
-
-                
             }
 
             public void SetThatSeed(Seed seed)
@@ -273,6 +298,7 @@ namespace AoC2023.Day1
 
             }
 
+            
         }
 
         public class Seed
