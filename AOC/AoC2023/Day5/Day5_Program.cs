@@ -7,6 +7,17 @@ namespace AoC2023.Day1
 {
     class Day5_Program
     {
+        public static readonly List<(string, string)> mappingList = new List<(string source, string destination)>()
+            {
+                ( "seed", "soil" ),
+                ( "soil", "fertilizer" ),
+                ( "fertilizer", "water" ),
+                ( "water", "light" ),
+                ( "light", "temperature" ),
+                ( "temperature", "humidity" ),
+                ( "humidity", "location" )
+        };
+
         static void Main(string[] args)
         {
             string filePath = $@"Day5\inputFileDay5-2023.txt";
@@ -24,12 +35,12 @@ namespace AoC2023.Day1
             Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
         }
 
-        private static int Part1(List<string> inputStrings)
+        private static long Part1(List<string> inputStrings)
         {
 
             var almanac = InputStringsToAlmanac(inputStrings);
-
-            return 0;
+            almanac.IdkSetSomeSeeds();
+            return almanac.InputSeeds.Min(s => s.Location);
         }
 
         private static int Part2(List<string> inputStrings)
@@ -44,49 +55,20 @@ namespace AoC2023.Day1
             inputStrings.ForEach(processingQueue.Enqueue);
 
             string seedsPattern = $@"(seeds: )(.*)";
-            string seedToSoilPattern = $@"(seed-to-soil map: )(.*)";
-            string soilToFertilizerPattern = $@"(soil-to-fertilizer map: )(.*)";
-            string fertilizerToWaterPattern = $@"(fertilizer-to-water map: )(.*)";
-            string waterToLightPattern = $@"(water-to-light map: )(.*)";
-            string lightToTemperaturePattern = $@"(light-to-temperature map: )(.*)";
-            string temperatureToHumidityPattern = $@"(temperature-to-humidity: )(.*)";
-            string humidityToLocationPattern = $@"(humidity-to-location: )(.*)";
 
-            var mappingList = new List<(string source, string destination)>()
-            {
-                ( "seed", "soil" ),
-                ( "soil", "fertilizer" ),
-                ( "fertilizer", "water" ),
-                ( "water", "light" ),
-                ( "light", "temperature" ),
-                ( "temperature", "humidity" ),
-                ( "humidity", "location" )
-            };
-
-            //var mapPatterns = new List<string>()
-            //{
-            //    seedToSoilPattern,
-            //    soilToFertilizerPattern,
-            //    fertilizerToWaterPattern,
-            //    fertilizerToWaterPattern,
-            //    waterToLightPattern,
-            //    lightToTemperaturePattern,
-            //    temperatureToHumidityPattern,
-            //    humidityToLocationPattern
-
-            //}
-
+            
 
             var seedLine = processingQueue.Dequeue();
             var seedRegex = new Regex(seedsPattern);
             var seedMatches = seedRegex.Matches(seedLine);
             var seedGroup = seedMatches[0].Groups[2];
-            almanac.SetSeeds(seedGroup.Value.Split(" ").Select(int.Parse).ToList());
 
-            foreach (var mapEntry in mappingList)
+            almanac.SetInputSeeds(seedGroup.Value.Split(" ").Select(Int64.Parse).ToList());
+
+            foreach (var (source, destination) in mappingList)
             {
-                var headerToFind = $@"{mapEntry.source}-to-{mapEntry.destination} map:";
-                var map = new Map(mapEntry.source, mapEntry.destination);
+                var headerToFind = $@"{source}-to-{destination} map:";
+                var map = new Map(source, destination);
                 almanac.Maps.Add(map);
 
                 var nextLine = processingQueue.Dequeue();
@@ -101,9 +83,9 @@ namespace AoC2023.Day1
                 {
                     var lineList = mapLine.Split(" ").ToList();
                     map.MapEntries.Add(new MapEntry(
-                        sourceRange: int.Parse(lineList[1]),
-                        destinationRange: int.Parse(lineList[0]), 
-                        rangeLength: int.Parse(lineList[2])
+                        sourceStart: Int64.Parse(lineList[1]),
+                        destinationStart: Int64.Parse(lineList[0]), 
+                        rangeLength: Int64.Parse(lineList[2])
                         ));
                     //todo work on this so it doesn't dequue end of filead
                     if (processingQueue.Count > 0)
@@ -116,38 +98,195 @@ namespace AoC2023.Day1
                 }
             }
 
-            return null;
+            return almanac;
 
         }
         #region lil classes
         public class Almanac
         {
-            public List<Seed> Seeds { get; set; } = new List<Seed>();
+            public List<Seed> InputSeeds { get; set; } = new List<Seed>();
             public List<Map> Maps { get; set; } = new List<Map>();
 
             public Almanac()
             {
 
             }
-            public void SetSeeds(List<int> seedInts)
+
+            public Map GetMapBySourceType(string sourceType) => Maps.FirstOrDefault(x => x.SourceType == sourceType);
+
+            public void SetInputSeeds(List<long> seedInts)
             {
-                Seeds = seedInts.Select(x => new Seed(x)).ToList();
+                InputSeeds = seedInts.Select(x => new Seed(x)).ToList();
+            }
+
+            public void IdkSetSomeSeeds()
+            {
+                //soil
+                var soilMap = GetMapBySourceType("seed");
+                foreach (var mapEntry in soilMap.MapEntries)
+                {
+                    var potentialSeeds = InputSeeds.Where(s => s.Id >= mapEntry.SourceStart && s.Id <= mapEntry.SourceStart + (mapEntry.RangeLength - 1));
+                    foreach (var seed in potentialSeeds)
+                    {
+                        var idx = seed.Id - mapEntry.SourceStart;
+                        seed.Soil = mapEntry.DestinationStart + idx;
+                    }
+                }
+                foreach (var seed in InputSeeds)
+                {
+                    if (seed.Soil == 0)
+                    {
+                        seed.Soil = seed.Id;
+                    }
+                }
+
+                //fertilizer
+                var fertilizerMap = GetMapBySourceType("soil");
+                foreach (var mapEntry in fertilizerMap.MapEntries)
+                {
+                    var potentialSeeds = InputSeeds.Where(s => s.Soil >= mapEntry.SourceStart && s.Soil <= mapEntry.SourceStart + (mapEntry.RangeLength - 1));
+                    foreach (var seed in potentialSeeds)
+                    {
+                        var idx = seed.Soil - mapEntry.SourceStart;
+                        seed.Fertilizer = mapEntry.DestinationStart + idx;
+                    }
+                }
+                foreach (var seed in InputSeeds)
+                {
+                    if (seed.Fertilizer == 0)
+                    {
+                        seed.Fertilizer = seed.Soil;
+                    }
+                }
+
+                //water
+                var waterMap = GetMapBySourceType("fertilizer");
+                foreach (var mapEntry in waterMap.MapEntries)
+                {
+                    var potentialSeeds = InputSeeds.Where(s => s.Fertilizer >= mapEntry.SourceStart && s.Fertilizer <= mapEntry.SourceStart + (mapEntry.RangeLength - 1));
+                    foreach (var seed in potentialSeeds)
+                    {
+                        var idx = seed.Fertilizer - mapEntry.SourceStart;
+                        seed.Water = mapEntry.DestinationStart + idx;
+                    }
+                }
+                foreach (var seed in InputSeeds)
+                {
+                    if (seed.Water == 0)
+                    {
+                        seed.Water = seed.Fertilizer;
+                    }
+                }
+
+                //light
+                var lightMap = GetMapBySourceType("water");
+                foreach (var mapEntry in lightMap.MapEntries)
+                {
+                    var potentialSeeds = InputSeeds.Where(s => s.Water >= mapEntry.SourceStart && s.Water <= mapEntry.SourceStart + (mapEntry.RangeLength - 1));
+                    foreach (var seed in potentialSeeds)
+                    {
+                        var idx = seed.Water - mapEntry.SourceStart;
+                        seed.Light = mapEntry.DestinationStart + idx;
+                    }
+                }
+                foreach (var seed in InputSeeds)
+                {
+                    if (seed.Light == 0)
+                    {
+                        seed.Light = seed.Water;
+                    }
+                }
+
+                //temperature
+                var temperature = GetMapBySourceType("light");
+                foreach (var mapEntry in temperature.MapEntries)
+                {
+                    var potentialSeeds = InputSeeds.Where(s => s.Light >= mapEntry.SourceStart && s.Light <= mapEntry.SourceStart + (mapEntry.RangeLength - 1));
+                    foreach (var seed in potentialSeeds)
+                    {
+                        var idx = seed.Light - mapEntry.SourceStart;
+                        seed.Temperature = mapEntry.DestinationStart + idx;
+                    }
+                }
+                foreach (var seed in InputSeeds)
+                {
+                    if (seed.Temperature == 0)
+                    {
+                        seed.Temperature = seed.Light;
+                    }
+                }
+
+                //humidity
+                var humidity = GetMapBySourceType("temperature");
+                foreach (var mapEntry in humidity.MapEntries)
+                {
+                    var potentialSeeds = InputSeeds.Where(s => s.Temperature >= mapEntry.SourceStart && s.Temperature <= mapEntry.SourceStart + (mapEntry.RangeLength - 1));
+                    foreach (var seed in potentialSeeds)
+                    {
+                        var idx = seed.Temperature - mapEntry.SourceStart;
+                        seed.Humidity = mapEntry.DestinationStart + idx;
+                    }
+                }
+                foreach (var seed in InputSeeds)
+                {
+                    if (seed.Humidity == 0)
+                    {
+                        seed.Humidity = seed.Temperature;
+                    }
+                }
+
+                //location
+                var location = GetMapBySourceType("humidity");
+                foreach (var mapEntry in location.MapEntries)
+                {
+                    var potentialSeeds = InputSeeds.Where(s => s.Humidity >= mapEntry.SourceStart && s.Humidity <= mapEntry.SourceStart + (mapEntry.RangeLength - 1));
+                    foreach (var seed in potentialSeeds)
+                    {
+                        var idx = seed.Humidity - mapEntry.SourceStart;
+                        seed.Location = mapEntry.DestinationStart + idx;
+                    }
+                }
+                foreach (var seed in InputSeeds)
+                {
+                    if (seed.Location == 0)
+                    {
+                        seed.Location = seed.Humidity;
+                    }
+                }
+
+
+                
+            }
+
+            public void SetThatSeed(Seed seed)
+            {
+                //soil
+                var soilMap = GetMapBySourceType("seed");
+                foreach (var mapEntry in soilMap.MapEntries)
+                {
+                    if (seed.Id >= mapEntry.SourceStart && seed.Id <= mapEntry.SourceStart + (mapEntry.RangeLength - 1))
+                    {
+                        var idx = seed.Id - mapEntry.SourceStart;
+                        seed.Fertilizer = mapEntry.DestinationStart + idx;
+                    }
+                }
+
             }
 
         }
 
         public class Seed
         {
-            public int Id { get; set; }
-            public int Soil { get; set; } = 0;
-            public int Fertilizer { get; set; } = 0;
-            public int Water { get; set; } = 0;
-            public int Light { get; set; } = 0;
-            public int Temperature { get; set; } = 0;
-            public int Humidity { get; set; } = 0;
-            public int Location { get; set; } = 0;
+            public long Id { get; set; }
+            public long Soil { get; set; } = 0;
+            public long Fertilizer { get; set; } = 0;
+            public long Water { get; set; } = 0;
+            public long Light { get; set; } = 0;
+            public long Temperature { get; set; } = 0;
+            public long Humidity { get; set; } = 0;
+            public long Location { get; set; } = 0;
 
-            public Seed(int id)
+            public Seed(long id)
             {
                 Id = id;
             }
@@ -164,22 +303,19 @@ namespace AoC2023.Day1
                 SourceType = sourceType;
                 DestinationType = destinationType;
             }
+
         }
 
         public class MapEntry
         {
-             public int SourceStart { get; set; }
-            public int SourceRange { get; set; }
+             public long SourceStart { get; set; }
+            public long DestinationStart { get; set; }
+            public long RangeLength { get; set; }
 
-            public int DestinationStart { get; set; }
-            public int DestinationRange { get; set; }
-
-            public int RangeLength { get; set; }
-
-             public MapEntry(int sourceRange, int destinationRange, int rangeLength)
+             public MapEntry(long sourceStart, long destinationStart, long rangeLength)
             {
-                SourceRange = sourceRange;
-                DestinationRange = destinationRange;
+                SourceStart = sourceStart;
+                DestinationStart = destinationStart;
                 RangeLength = rangeLength;
             }
         }
