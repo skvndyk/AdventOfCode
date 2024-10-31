@@ -27,7 +27,7 @@ namespace AoC2023.Day1
 
         private static int Part1(List<string> inputStrings)
         {
-            var hand = ConvertInputToDataStructures(inputStrings);
+            var hands = ConvertInputToDataStructures(inputStrings);
             return 0;
         }
 
@@ -37,18 +37,21 @@ namespace AoC2023.Day1
         }
 
        
-        private static Hand ConvertInputToDataStructures(List<string> inputStrings)
+        private static List<Hand> ConvertInputToDataStructures(List<string> inputStrings)
         {
-            var hand = new Hand();
+            var hands = new List<Hand>();
             foreach (var inputString in inputStrings) {
-
+                var hand = new Hand();
                 var cardsString = inputString[..5];
                 for (int i = 1; i < cardsString.Length+1; i++) {
                     hand.Cards.Add(new Card(cardsString[i-1], i));
                 }
                 hand.Bid = int.Parse(inputString[7..]);
+                hand.CalculateHandType();
+                hands.Add(hand);
+
             }
-            return hand;
+            return hands;
         }
 
         #region lil classes
@@ -56,11 +59,18 @@ namespace AoC2023.Day1
         {
             public List<Card> Cards { get; set; }
             public int Bid { get; set; }
+            public HandType HandType { get; set; }
             
             public Hand()
             {
                 Cards = [];
                 Bid = 0;
+            }
+
+            public void CalculateHandType()
+            {
+                var cardCounts = Cards.GroupBy(c => c.CardValue).Select(g => new {CardValue = g.Key, Count = g.Count()}).ToList();
+                var ccDict = cardCounts.ToDictionary(c => c.CardValue, c => c.Count);
             }
         
         }
@@ -89,6 +99,17 @@ namespace AoC2023.Day1
                 CardValue = cardValue;
                 Index = index;
             }
+        }
+
+        public enum HandType
+        {
+            HighCard = 1,
+            OnePair,
+            TwoPair,
+            ThreeOfAKind,
+            FullHouse,
+            FourOfAKind,
+            FiveOfAKind
         }
 
        
