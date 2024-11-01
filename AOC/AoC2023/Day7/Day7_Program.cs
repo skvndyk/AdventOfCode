@@ -71,31 +71,62 @@ namespace AoC2023.Day1
                 {
                     //if there's a tie sort by highest card
                     //get max for each index
+                    //for (int i = 0; i < 5 && orderedHandsByType.Count > 1; i++)
+                    //{
+                    //    maxCard = new Card();
+                    //    var maxVal = 0;
+                    //    for (int j = 0; j < orderedHandsByType.Count; j++)
+                    //    {
+                    //        if (orderedHandsByType[j].Cards[i].CardValue == maxVal)
+                    //        {
+                    //            maxCard = new Card();
+                    //            maxVal = 0;
+                    //            break;
+                    //        }
+                    //        else if (orderedHandsByType[j].Cards[i].CardValue > maxVal)
+                    //        {
+                    //            maxVal = orderedHandsByType[j].Cards[i].CardValue;
+                    //            maxCard = orderedHandsByType[j].Cards[i];
+                    //        }
+                    //    }
+                    //    if (maxVal != 0)
+                    //    {
+                    //        var toAddRemove = orderedHandsByType.First(h => h.Cards.Contains(maxCard));
+                    //        rankedHands.Add(toAddRemove);
+                    //        orderedHandsByType.Remove(toAddRemove);
+                    //    }
+                    //}
+
                     for (int i = 0; i < 5 && orderedHandsByType.Count > 1; i++)
                     {
-                        maxCard = new Card();
-                        var maxVal = 0;
-                        for (int j = 0; j < orderedHandsByType.Count; j++)
+                        var blah = orderedHandsByType.Max(h => h.Cards[i].CardValue);
+                        var blahCards = orderedHandsByType.Where(h => h.Cards[i].CardValue == blah).ToList();
+                        if (blahCards.Count > 1)
                         {
-                            if (orderedHandsByType[j].Cards[i].CardValue == maxVal)
+                            var nextComparison = blahCards.Max(h => h.Cards[i+1].CardValue);
+                            var blahCards2 = blahCards.Where(h => h.Cards[i+1].CardValue == nextComparison).ToList();
+                            if (blahCards2.Count > 1)
                             {
-                                maxCard = new Card();
-                                maxVal = 0;
-                                break;
-                            }
-                            else if (orderedHandsByType[j].Cards[i].CardValue > maxVal)
-                            {
-                                maxVal = orderedHandsByType[j].Cards[i].CardValue;
-                                maxCard = orderedHandsByType[j].Cards[i];
+                                var nextNextComparison = blahCards2.Max(h => h.Cards[i + 2].CardValue);
+                                var blahCards3 = blahCards2.Where(h => h.Cards[i + 2].CardValue == nextNextComparison).ToList();
+                                if (blahCards3.Count > 1)
+                                {
+                                    var nextNextNextComparison = blahCards3.Max(h => h.Cards[i + 3].CardValue);
+                                    var blahCards4 = blahCards3.Where(h => h.Cards[i + 3].CardValue == nextNextNextComparison).ToList();
+                                    if (blahCards4.Count > 1)
+                                    {
+                                        var finalComparison = blahCards4.Where(h => h.Cards[i + 4].CardValue == nextNextNextComparison).ToList();
+                                        var finalBlah = blahCards4.Max(h => h.Cards[i + 4].CardValue);
+                                    }
+
+                                }
                             }
                         }
-                        if (maxVal != 0)
-                        {
-                            var toAddRemove = orderedHandsByType.First(h => h.Cards.Contains(maxCard));
-                            rankedHands.Add(toAddRemove);
-                            orderedHandsByType.Remove(toAddRemove);
-                        }
-                    }
+
+                     }
+
+                    orderedHandsByType.Sort((h1, h2) => int.Max(h1.Cards[0].CardValue, h2.Cards[1].CardValue));
+
                     rankedHands.Add(orderedHandsByType[0]);
                 }
             }
