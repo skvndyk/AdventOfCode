@@ -96,43 +96,77 @@ namespace AoC2023.Day1
                     //        orderedHandsByType.Remove(toAddRemove);
                     //    }
                     //}
+                    //orderedHandsByType.Sort((h1, h2) => int.Max(h1.Cards[0].CardValue, h2.Cards[1].CardValue));
+                    //orderedHandsByType.OrderByDescending(h => h.Cards[0].CardValue);
+                    //rankedHands.AddRange(orderedHandsByType);
+                    //var i = 0;
+                    //while (orderedHandsByType.Count > 1 && i < 10)
+                    //{
+                    //    var blah = orderedHandsByType.Max(h => h.Cards[i].CardValue);
+                    //    var blahCards = orderedHandsByType.Where(h => h.Cards[i].CardValue == blah).ToList();
 
-                    for (int i = 0; i < 5 && orderedHandsByType.Count > 1; i++)
+                    //    if (blahCards.Count == 1)
+                    //    {
+                    //        orderedHandsByType.Remove(blahCards[0]);
+                    //        rankedHands.Add(blahCards[0]);
+                    //    }
+
+                    //    else { i++; }
+                    //}
+                    var i = 0;
+                    var leftOverList = new List<Hand>();
+                    while (orderedHandsByType.Count() > 1)
                     {
-                        var blah = orderedHandsByType.Max(h => h.Cards[i].CardValue);
-                        var blahCards = orderedHandsByType.Where(h => h.Cards[i].CardValue == blah).ToList();
-                        if (blahCards.Count > 1)
-                        {
-                            var nextComparison = blahCards.Max(h => h.Cards[i+1].CardValue);
-                            var blahCards2 = blahCards.Where(h => h.Cards[i+1].CardValue == nextComparison).ToList();
-                            if (blahCards2.Count > 1)
-                            {
-                                var nextNextComparison = blahCards2.Max(h => h.Cards[i + 2].CardValue);
-                                var blahCards3 = blahCards2.Where(h => h.Cards[i + 2].CardValue == nextNextComparison).ToList();
-                                if (blahCards3.Count > 1)
-                                {
-                                    var nextNextNextComparison = blahCards3.Max(h => h.Cards[i + 3].CardValue);
-                                    var blahCards4 = blahCards3.Where(h => h.Cards[i + 3].CardValue == nextNextNextComparison).ToList();
-                                    if (blahCards4.Count > 1)
-                                    {
-                                        var finalComparison = blahCards4.Where(h => h.Cards[i + 4].CardValue == nextNextNextComparison).ToList();
-                                        var finalBlah = blahCards4.Max(h => h.Cards[i + 4].CardValue);
-                                    }
-
-                                }
-                            }
-                        }
-
-                     }
-
-                    orderedHandsByType.Sort((h1, h2) => int.Max(h1.Cards[0].CardValue, h2.Cards[1].CardValue));
-
-                    rankedHands.Add(orderedHandsByType[0]);
+                        RecursiveThing(orderedHandsByType, rankedHands, i, leftOverList);
+                    }
                 }
             }
 
             return rankedHands;
         }
+
+        private static void RecursiveThing(List<Hand> orderedHandsByType, List<Hand> rankedHands, int i, List<Hand> leftOverList)
+        {
+            if (orderedHandsByType.Count == 1)
+            {
+                rankedHands.Add(orderedHandsByType[0]);
+                orderedHandsByType.Remove(orderedHandsByType[0]);
+                if (leftOverList.Count > 0)
+                {
+                    RecursiveThing(leftOverList, rankedHands, i, leftOverList);
+                }
+                return;
+            }
+            var blah = orderedHandsByType.Max(h => h.Cards[i].CardValue);
+            var blahCards = orderedHandsByType.Where(h => h.Cards[i].CardValue == blah).ToList();
+
+            if (blahCards.Count == 1)
+            {
+                orderedHandsByType.Remove(blahCards[0]);
+                rankedHands.Add(blahCards[0]);
+                i++;
+                RecursiveThing(orderedHandsByType, rankedHands, i, leftOverList);
+            }
+            else
+            {
+                var leftOverCards = orderedHandsByType.Except(blahCards).ToList();
+                if (leftOverCards.Count() == 0)
+                {
+                    i++;
+                }
+                else
+                {
+                    leftOverList.AddRange(leftOverCards);
+                    foreach (var item in leftOverList)
+                    {
+                        orderedHandsByType.Remove(item);
+                    }
+                }
+                RecursiveThing(orderedHandsByType, rankedHands, i, leftOverList);
+
+            }
+        }
+
         private static List<Hand> ConvertInputToDataStructures(List<string> inputStrings)
         {
             var hands = new List<Hand>();
@@ -165,6 +199,7 @@ namespace AoC2023.Day1
 
             public override string ToString()
             {
+                return string.Join("-", Cards.Select(c => c.GetCardType().ToString()));
                 return string.Join("-", Cards.Select(c => c.CardValue.ToString()));
             }
 
@@ -237,6 +272,19 @@ namespace AoC2023.Day1
             public override string ToString()
             {
                 return $"Card: {CardValue} at index {Index}";
+            }
+
+            public char GetCardType()
+            {
+                return CardValue switch
+                {
+                    10 => 'T',
+                    11 => 'J',
+                    12 => 'Q',
+                    13 => 'K',
+                    14 => 'A',
+                    _ => CardValue.ToString()[0],
+                };
             }
         }
 
