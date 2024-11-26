@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace AoC2023.Day1
@@ -29,7 +30,6 @@ namespace AoC2023.Day1
         {
             var hands = ConvertInputToDataStructures(inputStrings);
             var rankedHands = RankHands(hands);
-            rankedHands.Reverse();
             var sum = 0;
             for (int i = 0; i < rankedHands.Count; i++)
             {
@@ -45,126 +45,11 @@ namespace AoC2023.Day1
 
         private static List<Hand> RankHands(List<Hand> hands)
         {
-            var rankedHands = new List<Hand>();
-            var dict = new Dictionary<HandType, List<Hand>>();
-            foreach (var hand in hands)
-            {
-                var newKeyAdded = dict.TryAdd(hand.HandType, new List<Hand>() { hand });
-                if (!newKeyAdded)
-                {
-                    dict[hand.HandType].Add(hand);
-                }
-            }
-
-            var orderedDict = dict.OrderByDescending(kvp => kvp.Key).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            var orderedHandsByType = new List<Hand>();
-            var maxCard = new Card();
-            foreach (var rec in orderedDict.Keys)
-            {
-                orderedHandsByType = new List<Hand>(orderedDict[rec]);
-                //if there's no tie, just add to list
-                if (orderedDict[rec].Count == 1)
-                {
-                    rankedHands.Add(orderedDict[rec][0]);
-                }
-                else
-                {
-                    //if there's a tie sort by highest card
-                    //get max for each index
-                    //for (int i = 0; i < 5 && orderedHandsByType.Count > 1; i++)
-                    //{
-                    //    maxCard = new Card();
-                    //    var maxVal = 0;
-                    //    for (int j = 0; j < orderedHandsByType.Count; j++)
-                    //    {
-                    //        if (orderedHandsByType[j].Cards[i].CardValue == maxVal)
-                    //        {
-                    //            maxCard = new Card();
-                    //            maxVal = 0;
-                    //            break;
-                    //        }
-                    //        else if (orderedHandsByType[j].Cards[i].CardValue > maxVal)
-                    //        {
-                    //            maxVal = orderedHandsByType[j].Cards[i].CardValue;
-                    //            maxCard = orderedHandsByType[j].Cards[i];
-                    //        }
-                    //    }
-                    //    if (maxVal != 0)
-                    //    {
-                    //        var toAddRemove = orderedHandsByType.First(h => h.Cards.Contains(maxCard));
-                    //        rankedHands.Add(toAddRemove);
-                    //        orderedHandsByType.Remove(toAddRemove);
-                    //    }
-                    //}
-                    //orderedHandsByType.Sort((h1, h2) => int.Max(h1.Cards[0].CardValue, h2.Cards[1].CardValue));
-                    //orderedHandsByType.OrderByDescending(h => h.Cards[0].CardValue);
-                    //rankedHands.AddRange(orderedHandsByType);
-                    //var i = 0;
-                    //while (orderedHandsByType.Count > 1 && i < 10)
-                    //{
-                    //    var blah = orderedHandsByType.Max(h => h.Cards[i].CardValue);
-                    //    var blahCards = orderedHandsByType.Where(h => h.Cards[i].CardValue == blah).ToList();
-
-                    //    if (blahCards.Count == 1)
-                    //    {
-                    //        orderedHandsByType.Remove(blahCards[0]);
-                    //        rankedHands.Add(blahCards[0]);
-                    //    }
-
-                    //    else { i++; }
-                    //}
-                    var i = 0;
-                    var leftOverList = new List<Hand>();
-                    while (orderedHandsByType.Count() > 1)
-                    {
-                        RecursiveThing(orderedHandsByType, rankedHands, i, leftOverList);
-                    }
-                }
-            }
-
+            var rankedHands = hands.GroupBy(h => h.HandType)
+                .OrderBy(g => g.Key)
+                .Select(g => new { a = g.Key, b = g.OrderBy(z => z.HandValue) })
+                .SelectMany(g => g.b).ToList();
             return rankedHands;
-        }
-
-        private static void RecursiveThing(List<Hand> orderedHandsByType, List<Hand> rankedHands, int i, List<Hand> leftOverList)
-        {
-            if (orderedHandsByType.Count == 1)
-            {
-                rankedHands.Add(orderedHandsByType[0]);
-                orderedHandsByType.Remove(orderedHandsByType[0]);
-                if (leftOverList.Count > 0)
-                {
-                    RecursiveThing(leftOverList, rankedHands, i, leftOverList);
-                }
-                return;
-            }
-            var blah = orderedHandsByType.Max(h => h.Cards[i].CardValue);
-            var blahCards = orderedHandsByType.Where(h => h.Cards[i].CardValue == blah).ToList();
-
-            if (blahCards.Count == 1)
-            {
-                orderedHandsByType.Remove(blahCards[0]);
-                rankedHands.Add(blahCards[0]);
-                i++;
-                RecursiveThing(orderedHandsByType, rankedHands, i, leftOverList);
-            }
-            else
-            {
-                var leftOverCards = orderedHandsByType.Except(blahCards).ToList();
-                if (leftOverCards.Count() == 0)
-                {
-                    i++;
-                }
-                else
-                {
-                    leftOverList.AddRange(leftOverCards);
-                    foreach (var item in leftOverList)
-                    {
-                        orderedHandsByType.Remove(item);
-                    }
-                }
-                RecursiveThing(orderedHandsByType, rankedHands, i, leftOverList);
-
-            }
         }
 
         private static List<Hand> ConvertInputToDataStructures(List<string> inputStrings)
@@ -190,6 +75,7 @@ namespace AoC2023.Day1
             public List<Card> Cards { get; set; }
             public int Bid { get; set; }
             public HandType HandType { get; set; }
+            public int HandValue => Cards.Sum(c => c.IntegerValue);
             
             public Hand()
             {
@@ -199,8 +85,7 @@ namespace AoC2023.Day1
 
             public override string ToString()
             {
-                return string.Join("-", Cards.Select(c => c.GetCardType().ToString()));
-                return string.Join("-", Cards.Select(c => c.CardValue.ToString()));
+                return string.Join("-", Cards.Select(c => c.GetCardType().ToString())) + $@" HandValue: {HandValue:n0}" + $@" HandType: {HandType}";
             }
 
             public void CalculateHandType()
@@ -247,11 +132,14 @@ namespace AoC2023.Day1
         public class Card
         {
             public int CardValue { get; set; }
-            public int Index { get; set; }
+            public int? Index { get; set; }
+            public int IntegerValue { get; set; }
 
             public Card()
             {
-
+                IntegerValue = 0;
+                CardValue = 0;
+                Index = null;
             }
 
             public Card(char cardType, int index)
@@ -267,11 +155,14 @@ namespace AoC2023.Day1
                 };
                 CardValue = cardValue;
                 Index = index;
+                var reverseIdx = 5 - (int)(Index - 1);
+                var tenPower = (int)(Math.Pow(10, reverseIdx));
+                IntegerValue = tenPower * CardValue;
             }
 
             public override string ToString()
             {
-                return $"Card: {CardValue} at index {Index}";
+                return $"Card: {CardValue} at index {Index}, IntegerValue of {IntegerValue}";
             }
 
             public char GetCardType()
@@ -296,7 +187,7 @@ namespace AoC2023.Day1
             ThreeOfAKind,
             FullHouse,
             FourOfAKind,
-            FiveOfAKind
+            FiveOfAKind,
         }
 
        
