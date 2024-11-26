@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -45,10 +46,15 @@ namespace AoC2023.Day1
 
         private static List<Hand> RankHands(List<Hand> hands)
         {
-            var rankedHands = hands.GroupBy(h => h.HandType)
-                .OrderBy(g => g.Key)
-                .Select(g => new { a = g.Key, b = g.OrderBy(z => z.HandValue) })
-                .SelectMany(g => g.b).ToList();
+            var rankedHands = new List<Hand>();
+            var groupedHands = hands.GroupBy(h => h.HandType).OrderBy(g => g.Key);
+
+            foreach (var group in groupedHands)
+            {
+                var handList = group.Select(h => h).ToList();
+                var orderedList = handList.OrderBy(h => h.CardInts[0]).ThenBy(h => h.CardInts[1]).ThenBy(h => h.CardInts[2]).ThenBy(h => h.CardInts[3]).ThenBy(h => h.CardInts[4]).ToList();
+                rankedHands.AddRange(orderedList);
+            }
             return rankedHands;
         }
 
@@ -73,9 +79,10 @@ namespace AoC2023.Day1
         public class Hand
         {
             public List<Card> Cards { get; set; }
+            public List<int> CardInts => Cards.Select(c => c.CardValue).ToList();
             public int Bid { get; set; }
             public HandType HandType { get; set; }
-            public int HandValue => Cards.Sum(c => c.IntegerValue);
+            //public int HandValue => Cards.Sum(c => c.IntegerValue);
             
             public Hand()
             {
@@ -85,7 +92,7 @@ namespace AoC2023.Day1
 
             public override string ToString()
             {
-                return string.Join("-", Cards.Select(c => c.GetCardType().ToString())) + $@" HandValue: {HandValue:n0}" + $@" HandType: {HandType}";
+                return string.Join("-", Cards.Select(c => c.GetCardType().ToString())) + $@"HandType: {HandType}";
             }
 
             public void CalculateHandType()
@@ -133,11 +140,11 @@ namespace AoC2023.Day1
         {
             public int CardValue { get; set; }
             public int? Index { get; set; }
-            public int IntegerValue { get; set; }
+            //public int IntegerValue { get; set; }
 
             public Card()
             {
-                IntegerValue = 0;
+                //IntegerValue = 0;
                 CardValue = 0;
                 Index = null;
             }
@@ -157,12 +164,12 @@ namespace AoC2023.Day1
                 Index = index;
                 var reverseIdx = 5 - (int)(Index - 1);
                 var tenPower = (int)(Math.Pow(10, reverseIdx));
-                IntegerValue = tenPower * CardValue;
+                //IntegerValue = tenPower * CardValue;
             }
 
             public override string ToString()
             {
-                return $"Card: {CardValue} at index {Index}, IntegerValue of {IntegerValue}";
+                return $"Card: {CardValue} at index {Index}";
             }
 
             public char GetCardType()
