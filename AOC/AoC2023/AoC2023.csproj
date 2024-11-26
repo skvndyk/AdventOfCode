@@ -3,13 +3,14 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <StartupObject>AoC2023.Day1.Day7_Program</StartupObject>
+    <StartupObject>AoC2023.Day1.Day8_Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Day1\exInputFileDay1-2023_P1.txt" />
     <None Remove="Day1\exInputFileDay1-2023_P2.txt" />
     <None Remove="Day1\inputFileDay1-2023.txt" />
+    <None Remove="Day8\exInputFileDay8-2023_P1.txt" />
     <None Remove="Day7\exInputFileDay7-2023_P1.txt" />
     <None Remove="Day7\exInputFileDay7-2023_P2.txt" />
     <None Remove="Day6\exInputFileDay6-2023_P1.txt" />
@@ -28,9 +29,16 @@
     <None Remove="Day5\inputFileDay5-2023.txt" />
     <None Remove="Day6\inputFileDay6-2023.txt" />
     <None Remove="Day7\inputFileDay7-2023.txt" />
+    <None Remove="Day8\inputFileDay8-2023.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Day8\exInputFileDay8-2023_P1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day8\inputFileDay8-2023.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Day7\exInputFileDay7-2023_P1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
