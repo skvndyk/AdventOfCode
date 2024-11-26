@@ -12,19 +12,27 @@ namespace AoC2023.Day1
             string exFilePath1 = $@"Day8\exInputFileDay8-2023_P1.txt";
 
             var exInputStrings = Common.Utilities.ReadFileToStrings(exFilePath1);
-            //var inputStrings = Common.Utilities.ReadFileToStrings(filePath);
+            var inputStrings = Common.Utilities.ReadFileToStrings(filePath);
 
-            Console.WriteLine($"Part 1 example answer: {Part1(exInputStrings)}");
+            //Console.WriteLine($"Part 1 example answer: {Part1(exInputStrings)}");
             //Console.WriteLine($"Part 2 example answer: {Part2(exInputStrings)}");
 
-            //Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
+            Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
             //Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
         }
 
         private static int Part1(List<string> inputStrings)
         {
             var map = ConvertInputToDataStructures(inputStrings);
-            return 0;
+            var currentNode = map.Nodes.FirstOrDefault(n => n.MapPoint == "AAA");
+            var gameCounter = 0;
+            while (currentNode.MapPoint != "ZZZ")
+            {
+                currentNode = map.ApplyDirection(currentNode);
+                gameCounter++;
+            }
+            
+            return gameCounter;
         }
 
         private static int Part2(List<string> inputStrings)
@@ -44,15 +52,40 @@ namespace AoC2023.Day1
             {
                 Instructions = new Instructions(inputString);
             }
+
+            public Node ApplyDirection(Node node)
+            {
+                return Move(node, Instructions.Directions[Instructions.IndexCounter]);
+            }
+            private Node Move(Node node, int idx)
+            {
+                Instructions.IncreaseIndexCounter();
+                return Nodes.Where(n => n.MapPoint == node.Elements[idx]).FirstOrDefault();
+            }
         }
+
         public class Instructions
         {
-            List<int> Indices { get; set; } = new List<int>();
+            public List<int> Directions { get; set; } = new List<int>();
+            public int IndexCounter { get; set; } = 0;
+
             public Instructions(string inputString)
             {
                 foreach (var elem in inputString)
                 {
-                    Indices.Add(elem == 'L' ? 0 : 1);
+                    Directions.Add(elem == 'L' ? 0 : 1);
+                }
+            }
+
+            public void IncreaseIndexCounter()
+            {
+                if (IndexCounter == Directions.Count - 1)
+                {
+                    IndexCounter = 0;
+                }
+                else
+                {
+                    IndexCounter++;
                 }
             }
         }
