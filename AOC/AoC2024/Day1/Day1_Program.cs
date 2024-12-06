@@ -20,8 +20,8 @@ namespace AoC2024.Day1
             //Console.WriteLine($"Example Part 1 answer: {Part1(exInputStrings1)}");
             //Console.WriteLine($"Example Part 2 answer: {Part2(exInputStrings2)}");
 
-            Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
-            //Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
+            //Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
+            Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
         }
 
         private static int Part1(List<string> inputStrings)
@@ -39,7 +39,42 @@ namespace AoC2024.Day1
 
         private static int Part2(List<string> inputStrings)
         {
-            return 0;
+            (List<int> listLeft, List<int> listRight) = ParseInputStrings(inputStrings);
+
+            var leftDict = new Dictionary<int, int>();
+            var rightDict = new Dictionary<int, int>();
+            foreach (var item in listLeft)
+            {
+                if (leftDict.TryGetValue(item, out int val))
+                {
+                    leftDict[item]++;
+                }
+                else
+                {
+                    leftDict[item] = 1;
+                }
+            }
+
+            foreach (var item in listRight)
+            {
+                if (rightDict.TryGetValue(item, out int val))
+                {
+                    rightDict[item]++;
+                }
+                else
+                {
+                    rightDict[item] = 1;
+                }
+            }
+
+            var sum = 0;
+
+            foreach (var item in listLeft)
+            {
+                if (rightDict.ContainsKey(item)) { sum += item * rightDict[item]; }
+                
+            }
+            return sum;
         }
 
         private static (List<int>, List<int>) ParseInputStrings(List<string> strings)
