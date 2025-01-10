@@ -29,6 +29,7 @@ namespace AoC2024.Day4
         private static int Part1(List<string> inputStrings)
         {
             var grid = SetupGrid(inputStrings);
+            grid.PrintGrid();
             var numTimes = 0;
             
             return numTimes;
@@ -61,9 +62,7 @@ namespace AoC2024.Day4
 
             public int MaxX => Cells.Select(Cells => Cells.X).Max();
             public int MinX => Cells.Select(Cells => Cells.X).Min();
-
             public int MaxY => Cells.Select(Cells => Cells.Y).Max();
-
             public int MinY => Cells.Select(Cells => Cells.Y).Min();
 
             public Grid()
@@ -81,9 +80,31 @@ namespace AoC2024.Day4
                 return Cells.FirstOrDefault(c => c.X == x && c.Y == y);
             }
 
+            public bool CellExists(int x, int y)
+            {
+                return Cells.Any(c => c.X == x && c.Y == y);
+            }
+
             public void AddCell(Cell cell)
             {
                 Cells.Add(cell);
+            }
+
+            public void PrintGrid()
+            {
+                var lineToPrint = new List<string>();
+                for (int y = 0; y < MaxY; y++)
+                {
+                    lineToPrint = new List<string>();
+                    for (int x = 0; x < MaxX; x++)
+                    {
+                        if (CellExists(x, y))
+                        {
+                            lineToPrint.Add(GetCell(x, y).Value);
+                        }
+                    }
+                    Console.WriteLine(string.Join("", lineToPrint));
+                }
             }
 
             public Cell? MoveLeft(Cell cell) => GetCell(cell.X - 1, cell.Y);
