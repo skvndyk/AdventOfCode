@@ -5,19 +5,31 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <StartupObject>AoC2024.Day1.Day2_Program</StartupObject>
+    <StartupObject>AoC2024.Day1.Day3_Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Day3\exInputFileDay3-2024_P1.txt" />
+    <None Remove="Day3\exInputFileDay3-2024_P2.txt" />
     <None Remove="Day2\exInputFileDay2-2024_P1.txt" />
     <None Remove="Day2\exInputFileDay2-2024_P2.txt" />
     <None Remove="Day1\exInputFileDay1-2024_P1.txt" />
     <None Remove="Day1\exInputFileDay1-2024_P2.txt" />
     <None Remove="Day1\inputFileDay1-2024.txt" />
     <None Remove="Day2\inputFileDay2-2024.txt" />
+    <None Remove="Day3\inputFileDay3-2024.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Day3\exInputFileDay3-2024_P1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day3\exInputFileDay3-2024_P2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day3\inputFileDay3-2024.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Day2\exInputFileDay2-2024_P1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -83,35 +83,44 @@ namespace AoC2024.Day1
                 Console.WriteLine($"Report {numReportsProcessed + 1} ({string.Join(" ", report)}) originally has {badLevels.Count}");
                 if (badLevels.Count > 0)
                 {
-                    foreach (var key in badLevels.Keys)
+                    if (badLevels.Count == 1)
                     {
-                        Console.WriteLine($"Level {key + 1}: {badLevels[key]}");
-                    }
-
-                    
-                    Console.WriteLine("Attempting to fix report");
-                    var reportFixable = false;
-                    //add first element manually, otherwise we always assume it's the 2nd element's fault
-                    badLevels[0] = report[0];
-                    foreach (var candidate in badLevels.Keys)
-                    {
-                        var fixedReport = new List<int>(report);
-                        fixedReport.RemoveAt(candidate);
-                        Console.WriteLine($"Tried to fix report by removing element at level {candidate + 1} ({badLevels[candidate]})");
-                        Console.WriteLine($"Fixed report: {string.Join(" ", fixedReport)}");
-                        if (AnalyzeRecord(fixedReport).Count == 0)
+                        foreach (var key in badLevels.Keys)
                         {
-                            Console.WriteLine("Report fixed!\n");
-                            reportFixable = true;
-                            numSafeReports++;
-                            break;
+                            Console.WriteLine($"Level {key + 1}: {badLevels[key]}");
+                        }
+
+
+                        Console.WriteLine("Attempting to fix report");
+                        var reportFixable = false;
+                        //add first element manually, otherwise we always assume it's the 2nd element's fault
+                        badLevels[0] = report[0];
+                        foreach (var candidate in badLevels.Keys)
+                        {
+                            var fixedReport = new List<int>(report);
+                            fixedReport.RemoveAt(candidate);
+                            Console.WriteLine($"Tried to fix report by removing element at level {candidate + 1} ({badLevels[candidate]})");
+                            Console.WriteLine($"Fixed report: {string.Join(" ", fixedReport)}");
+                            if (AnalyzeRecord(fixedReport).Count == 0)
+                            {
+                                Console.WriteLine("Report fixed!\n");
+                                reportFixable = true;
+                                numSafeReports++;
+                                break;
+                            }
+                        }
+                        if (!reportFixable)
+                        {
+                            Console.WriteLine("Could not fix report\n");
                         }
                     }
-                    if (!reportFixable)
+
+                    else
                     {
                         Console.WriteLine("Could not fix report\n");
                     }
-                
+
+
                 }
                 else
                 {
