@@ -20,9 +20,9 @@ namespace AoC2024.Day4
             var inputStrings = Common.Utilities.ReadFileToStrings(filePath);
 
             //Console.WriteLine($"Example Part 1 answer: {Part1(exInputStrings1)}");
-            //Console.WriteLine($"Example Part 2 answer: {Part2(exInputStrings2)}");
+            Console.WriteLine($"Example Part 2 answer: {Part2(exInputStrings2)}");
 
-            Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
+            //Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
             //Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
         }
 
@@ -36,6 +36,7 @@ namespace AoC2024.Day4
 
         private static int Part2(List<string> inputStrings)
         {
+            CountNumberOfMasStrings(SetupGrid(inputStrings));
             return 0;   
         }
 
@@ -52,6 +53,36 @@ namespace AoC2024.Day4
                 }
             }
             return grid;
+        }
+
+        private static int CountNumberOfMasStrings(Grid grid)
+        {
+            //find A first
+            var numStrings = 0;
+            var aCells = grid.GetCellsWithValue("A");
+            var cellsToKeepList = new List<Cell>();
+            foreach (var aCell in aCells)
+            {
+                var masCells = MasSearch(grid, aCell);
+                if (masCells.Any())
+                {
+                    cellsToKeepList.AddRange(masCells);
+                    numStrings++;
+                }
+            }
+
+            var cellsToKeepHash = new HashSet<Cell>(cellsToKeepList);
+
+
+            foreach (var cell in grid.Cells.Except(cellsToKeepHash))
+            {
+                cell.Value = ".";
+            }
+
+            grid.PrintGrid();
+
+
+            return numStrings;
         }
 
         private static int CountNumberOfXmasStrings(Grid grid)
@@ -141,9 +172,6 @@ namespace AoC2024.Day4
             return numStrings;
         }
 
-        //https://www.sanfoundry.com/csharp-program-arithmetic-operations-delegates/
-        delegate int NumberChanger(int a, int b);
-
         private static int Add(int a, int b)
         {
             var val = a + b;
@@ -156,6 +184,90 @@ namespace AoC2024.Day4
             return val;
         }
 
+
+        private static List<Cell> MasSearch(Grid grid, Cell aCell)
+        {
+            var letters = new List<string> { "M", "S" };
+            var counter = 0;
+            var potentialCellsToKeep = new List<Cell>() { aCell };
+            var breakFlag = false;
+
+            (Func<int, int, int> xOp, Func<int, int, int> yOp) upperLeft = (Subtract, Subtract);
+            (Func<int, int, int> xOp, Func<int, int, int> yOp) lowerRight = (Add, Add);
+            (Func<int, int, int> xOp, Func<int, int, int> yOp) upperRight = (Add, Subtract);
+            (Func<int, int, int> xOp, Func<int, int, int> yOp) lowerLeft = (Subtract, Add);
+
+            var upperLeftXCoord = upperLeft.xOp(aCell.X, 1);
+            var upperLeftYCoord = upperLeft.yOp(aCell.Y, 1);
+
+            var cellExists = grid.CellExists(upperLeftXCoord, upperLeftYCoord);
+            if (cellExists.DoesExist)
+            {
+                var potentialCell = cellExists.Cell;
+                if (potentialCell != null && letters.Contains(potentialCell.Value))
+                {
+                    potentialCellsToKeep.Add(potentialCell);
+                    letters.Remove(letters.First(l => l == potentialCell.Value));
+                }
+
+                else return [];
+            }
+            else return [];
+
+            var lowerRightXCoord = lowerRight.xOp(aCell.X, 1);
+            var lowerRightYCoord = lowerRight.yOp(aCell.Y, 1);
+
+            cellExists = grid.CellExists(lowerRightXCoord, lowerRightYCoord);
+            if (cellExists.DoesExist)
+            {
+                var potentialCell = cellExists.Cell;
+                if (potentialCell != null && letters.Contains(potentialCell.Value))
+                {
+                    potentialCellsToKeep.Add(potentialCell);
+                }
+                else return [];
+            }
+            else return [];
+
+            //////////check next axis
+
+            letters = ["M", "S"];
+
+            var upperRightXCoord = upperRight.xOp(aCell.X, 1);
+            var upperRightYCoord = upperRight.yOp(aCell.Y, 1);
+
+            cellExists = grid.CellExists(upperRightXCoord, upperRightYCoord);
+            if (cellExists.DoesExist)
+            {
+                var potentialCell = cellExists.Cell;
+                if (potentialCell != null && letters.Contains(potentialCell.Value))
+                {
+                    potentialCellsToKeep.Add(potentialCell);
+                    letters.Remove(letters.First(l => l == potentialCell.Value));
+                }
+
+                else return [];
+            }
+            else return [];
+
+            var lowerLeftXCoord = lowerLeft.xOp(aCell.X, 1);
+            var lowerLeftYCoord = lowerLeft.yOp(aCell.Y, 1);
+
+            cellExists = grid.CellExists(lowerLeftXCoord, lowerLeftYCoord);
+            if (cellExists.DoesExist)
+            {
+                var potentialCell = cellExists.Cell;
+                if (potentialCell != null && letters.Contains(potentialCell.Value))
+                {
+                    potentialCellsToKeep.Add(potentialCell);
+                }
+            }
+            else return [];
+
+            return potentialCellsToKeep;
+        }
+
+
         private static List<Cell> GenericSearch(Grid grid, Cell xCell, Func<int, int, int>? xOp, Func<int, int, int>? yOp)
         {
             var letters = new List<string> { "M", "A", "S" };
@@ -165,10 +277,6 @@ namespace AoC2024.Day4
             var breakFlag = false;
             while (counter < 3 && !breakFlag)
             {
-                //var cellExists = grid.CellExists(xOp == null ? newXCell.X : xOp(xCell.X, xOp(xCell.X, 1),
-                //                    yOp == null ? newXCell.Y : yOp(xCell.Y, GetSecondInt(yOp, counter)));
-
-                var coord = 0;
                 var xCoord = xOp == null ? newXCell.X : xOp(newXCell.X, 1);
                 var yCoord = yOp == null ? newXCell.Y : yOp(newXCell.Y, 1);
 
