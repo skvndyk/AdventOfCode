@@ -52,13 +52,26 @@ namespace AoC2024.Day6
                 var row = new List<Square>();
                 for (int x = 0; x < inputStrings[y].Length; x++)
                 {
-                    var square = new Square
+                    var content = CharToContent(inputStrings[y][x]);
+                    if (content == Content.GuardNorth)
                     {
-                        X = x,
-                        Y = y,
-                        Content = CharToContent(inputStrings[y][x])
-                    };
-                    row.Add(square);
+                        row.Add(new GuardSquare()
+                        {
+                            X = x,
+                            Y = y,
+                            Content = content
+                        });
+                    }
+
+                    else 
+                    {
+                        row.Add(new Square()
+                        {
+                            X = x,
+                            Y = y,
+                            Content = content
+                        });
+                    }
                 }
                 map.Squares.AddRange(row);
             }
@@ -102,11 +115,41 @@ namespace AoC2024.Day6
         {
             public int X;
             public int Y;
-            public Content Content { get; set; }
+            public virtual Content Content { get; set; }
+        }
 
-            public override string ToString()
+        public class GuardSquare : Square
+        {
+            public readonly Dictionary<Content, Content> RotationDict = new()
             {
-                return $"X: {X}, Y: {Y}, Content: {Content}";
+                {Content.GuardNorth, Content.GuardEast},
+                {Content.GuardEast, Content.GuardSouth},
+                {Content.GuardSouth, Content.GuardWest},
+                {Content.GuardWest, Content.GuardNorth}
+            };
+
+            public void RotateGuard()
+            {
+                Content = RotationDict[Content];
+            }
+
+            public void MoveGuard()
+            {
+                switch (Content)
+                {
+                    case Content.GuardNorth:
+                        Y--;
+                        break;
+                    case Content.GuardSouth:
+                        Y++;
+                        break;
+                    case Content.GuardEast:
+                        X++;
+                        break;
+                    case Content.GuardWest:
+                        X--;
+                        break;
+                }
             }
         }
 
@@ -115,7 +158,10 @@ namespace AoC2024.Day6
             return s switch
             {
                 "." => Content.Empty,
-                "^" => Content.Guard,
+                "^" => Content.GuardNorth,
+                "v" => Content.GuardSouth,
+                ">" => Content.GuardEast,
+                "<" => Content.GuardWest,
                 _ => Content.Obstacle,
             };
         }
@@ -125,7 +171,10 @@ namespace AoC2024.Day6
             return content switch
             {
                 Content.Empty => ".",
-                Content.Guard => "^",
+                Content.GuardNorth => "^",
+                Content.GuardSouth => "v",
+                Content.GuardEast => ">",
+                Content.GuardWest => "<",
                 _ => "#",
             };
         }
@@ -135,7 +184,10 @@ namespace AoC2024.Day6
             return c switch
             {
                 '.' => Content.Empty,
-                '^' => Content.Guard,
+                '^' => Content.GuardNorth,
+                'v' => Content.GuardSouth,
+                '>' => Content.GuardEast,
+                '<' => Content.GuardWest,
                 _ => Content.Obstacle,
             };
         }
@@ -145,7 +197,10 @@ namespace AoC2024.Day6
             return content switch
             {
                 Content.Empty => '.',
-                Content.Guard => '^',
+                Content.GuardNorth => '^',
+                Content.GuardSouth => 'v',
+                Content.GuardEast => '>',
+                Content.GuardWest => '<',
                 _ => '#',
             };
         }
@@ -154,7 +209,10 @@ namespace AoC2024.Day6
         {
             Empty,
             Obstacle,
-            Guard
+            GuardNorth,
+            GuardSouth,
+            GuardEast,
+            GuardWest
         }
 
         #endregion
