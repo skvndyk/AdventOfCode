@@ -33,6 +33,7 @@ namespace AoC2024.Day6
         {
             var map = ParseInputStrings(inputStrings);
             map.PrintMap();
+            map.ExecuteGuardPatrol();
             return 0;
         }
 
@@ -41,8 +42,8 @@ namespace AoC2024.Day6
             return 0;
         }
 
-        
-        
+
+
 
         private static Map ParseInputStrings(List<string> inputStrings)
         {
@@ -63,7 +64,7 @@ namespace AoC2024.Day6
                         });
                     }
 
-                    else 
+                    else
                     {
                         row.Add(new Square()
                         {
@@ -88,6 +89,11 @@ namespace AoC2024.Day6
                 return Squares.FirstOrDefault(s => s.X == x && s.Y == y);
             }
 
+            public Square GetGuardSquare()
+            {
+                return Squares.FirstOrDefault(s => IsGuardSquare(s));
+            }
+
             public void PrintMap()
             {
                 var maxX = Squares.Max(s => s.X);
@@ -106,8 +112,71 @@ namespace AoC2024.Day6
                     }
 
                     Console.WriteLine(strBuilder.ToString());
-  
+
                 }
+
+                Console.WriteLine("\n\n\n\n");
+            }
+
+            public void ExecuteGuardPatrol()
+            {
+                var guardSquare = GetGuardSquare();
+                var guardBlocked = false;
+                var nextMoveOnBoard = true;
+
+                while (nextMoveOnBoard)
+                {
+                    while (!guardBlocked && nextMoveOnBoard)
+                    {
+                        ((GuardSquare)guardSquare).MoveGuard();
+                        PrintMap();
+                    }
+
+                    if (guardBlocked)
+                    {
+                        var (x, y) = ((GuardSquare)guardSquare).MoveGuardDryRun();
+                        var square = GetSquare(x, y);
+                        if (square.Content == Content.Obstacle)
+                        {
+                            ((GuardSquare)guardSquare).RotateGuard();
+                        }
+
+                        ((GuardSquare)guardSquare).MoveGuard();
+                        PrintMap();
+                    }
+
+                    guardBlocked = IsGuardBlockedOnNextMove();
+                    nextMoveOnBoard = IsNextMoveStillOnBoard();
+                }
+
+                Console.WriteLine("rest easy"); 
+            }
+
+            public Square GetNextMoveSquare()
+            {
+                var guardSquare = GetGuardSquare();
+                var (x, y) = ((GuardSquare)guardSquare).MoveGuardDryRun();
+                return GetSquare(x, y);
+            }
+
+            public bool IsGuardBlockedOnNextMove()
+            {
+                var square = GetNextMoveSquare();
+                if (square.Content == Content.Obstacle)
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public bool IsNextMoveStillOnBoard()
+            {
+                var square = GetNextMoveSquare();
+                if (square.X < 0 || square.Y < 0)
+                {
+                    return false;
+                }
+                return true;
             }
         }
 
@@ -116,6 +185,11 @@ namespace AoC2024.Day6
             public int X;
             public int Y;
             public virtual Content Content { get; set; }
+        }
+
+        public static bool IsGuardSquare(Square square)
+        {
+            return square is GuardSquare;
         }
 
         public class GuardSquare : Square
@@ -138,21 +212,39 @@ namespace AoC2024.Day6
                 switch (Content)
                 {
                     case Content.GuardNorth:
-                        Y--;
+                        Y = Y-1;
                         break;
                     case Content.GuardSouth:
-                        Y++;
+                        Y = Y + 1;
                         break;
                     case Content.GuardEast:
-                        X++;
+                        X = X + 1;
                         break;
                     case Content.GuardWest:
-                        X--;
+                        X = X - 1;
                         break;
+                }
+            }
+
+            public (int, int) MoveGuardDryRun()
+            {
+                switch (Content)
+                {
+                    case Content.GuardNorth:
+                        return (X, Y - 1);
+                    case Content.GuardSouth:
+                        return (X, Y + 1);
+                    case Content.GuardEast:
+                        return (X + 1, Y);
+                    case Content.GuardWest:
+                        return (X - 1, Y);
+                    default:
+                        throw new InvalidOperationException("Invalid guard movement");
                 }
             }
         }
 
+        #region helper methods
         public static Content StringToContent(string s)
         {
             return s switch
@@ -205,6 +297,7 @@ namespace AoC2024.Day6
             };
         }
 
+        #endregion
         public enum Content
         {
             Empty,
@@ -218,5 +311,5 @@ namespace AoC2024.Day6
         #endregion
     }
 
-    
+
 }
