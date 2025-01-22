@@ -20,9 +20,9 @@ namespace AoC2024.Day5
             var inputStrings = Common.Utilities.ReadFileToStrings(filePath);
 
             //Console.WriteLine($"Example Part 1 answer: {Part1(exInputStrings)}");
-            //Console.WriteLine($"Example Part 2 answer: {Part2(exInputStrings)}");
+            Console.WriteLine($"Example Part 2 answer: {Part2(exInputStrings)}");
 
-            Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
+            //Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
             //Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
         }
 
@@ -65,8 +65,70 @@ namespace AoC2024.Day5
 
         private static int Part2(List<string> inputStrings)
         {
-            return 0;  
+            var sumCorrectPageNumbers = 0;
+            var manual = ParseInputStrings(inputStrings);
+            var isOrderCorrect = true;
+            foreach (var update in manual.Updates)
+            {
+                isOrderCorrect = true;
+                foreach (var pageNum in update.PageNumbers)
+                {
+                    var relevantRules = manual.Rules.Where(r => r.IsPageNumberPartOfRule(pageNum)).ToList();
+                    if (relevantRules.Any())
+                    {
+                        foreach (var rule in relevantRules)
+                        {
+                            if (!update.IsRuleFollowed(rule))
+                            {
+                                isOrderCorrect = false;
+                                update.RulesNotFollowed.Add(rule);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                update.DoesFollowRules = isOrderCorrect;
+            }
+
+            var incorrectUpdates = manual.Updates.Where(u => !u.DoesFollowRules).ToList();
+
+            foreach (var incorrectUpdate in incorrectUpdates)
+            {
+                var correctUpdate = SortUpdate(incorrectUpdate);   
+            }
+            return sumCorrectPageNumbers;
         }
+
+        private static Update SortUpdate(Update update)
+        {
+            var potentialUpdate = new Update(update);
+            //need to loop around
+            //97, 13, 75, 29, 47
+            //13, 97, 75, 29, 47
+
+            for (int i = 0; i < update.PageNumbers.Count - 2; i++)
+            {
+                for (int j = 1; j < update.PageNumbers.Count - 1; j++)
+                {
+                    var tempOrig = potentialUpdate.PageNumbers[i];
+                    var tempNew = potentialUpdate.PageNumbers[j];
+                    potentialUpdate.PageNumbers[i] = tempNew;
+                    potentialUpdate.PageNumbers[j] = tempOrig;
+                    if (potentialUpdate.AreAllRulesFollowed(potentialUpdate.RulesNotFollowed))
+                    {
+                        Console.WriteLine("yay! in order");
+                        return potentialUpdate;
+                    }
+                }
+
+            }
+
+            return null;
+            
+        }
+
+        
 
         private static Manual ParseInputStrings(List<string> inputStrings)
         {
@@ -122,6 +184,17 @@ namespace AoC2024.Day5
         {
             public List<int> PageNumbers { get; set; } = new List<int>();
             public bool DoesFollowRules = false;
+          
+            public HashSet<Rule> RulesNotFollowed { get; set; } = new HashSet<Rule>();
+
+            public Update(Update update)
+            {
+                PageNumbers = new List<int>(update.PageNumbers);
+                RulesNotFollowed = new HashSet<Rule>(update.RulesNotFollowed);
+            }
+
+            public Update()
+            { }
 
             public bool IsRuleFollowed(Rule rule)
             {
@@ -131,6 +204,19 @@ namespace AoC2024.Day5
                 if (indexOfBefore != -1 && indexOfAfter != -1)
                 {
                     return indexOfBefore < indexOfAfter;
+                }
+
+                return true;
+            }
+
+            public bool AreAllRulesFollowed(IEnumerable<Rule> rules)
+            {
+                foreach (var rule in rules)
+                {
+                    if (!IsRuleFollowed(rule))
+                    {
+                        return false;
+                    }
                 }
 
                 return true;
