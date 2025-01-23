@@ -33,7 +33,7 @@ namespace AoC2024.Day6
         {
             var map = ParseInputStrings(inputStrings);
             map.PrintMap();
-            //map.ExecuteGuardPatrol();
+            map.ExecuteGuardPatrol();
             return 0;
         }
 
@@ -84,14 +84,24 @@ namespace AoC2024.Day6
         {
             public List<Content> Contents = new();
 
+
+            public int MaxX => Contents.Max(c => c.X);
+            public int MaxY => Contents.Max(c => c.Y);
+
             public Content GetContent(int x, int y)
             {
                 return Contents.FirstOrDefault(s => s.X == x && s.Y == y);
             }
 
-            public Content GetGuardSquare()
+            public Guard GetGuard()
             {
-                return Contents.FirstOrDefault(s => s is Guard);
+                var guard = Contents.FirstOrDefault(s => s is Guard);
+                if (guard != null)
+                {
+                    return (Guard)guard;
+                }
+
+                return null;
             }
 
             public void PrintMap()
@@ -121,86 +131,80 @@ namespace AoC2024.Day6
                 Console.WriteLine("\n\n\n\n");
             }
 
-            //    public void ExecuteGuardPatrol()
-            //    {
-            //        var guardSquare = (GuardSquare)GetGuardSquare();
-            //        var guardX = guardSquare.X;
-            //        var guardY = guardSquare.Y;
-            //        var guardBlocked = false;
-            //        var nextMoveOnBoard = true;
+            public void ExecuteGuardPatrol()
+            {
+                var guard = GetGuard();
+                var guardX = guard.X;
+                var guardY = guard.Y;
+                var guardBlocked = false;
+                var nextMoveOnBoard = true;
 
-            //        while (nextMoveOnBoard)
-            //        {
-            //            while (!guardBlocked && nextMoveOnBoard)
-            //            {
+                while (nextMoveOnBoard)
+                {
+                    while (!guardBlocked && nextMoveOnBoard)
+                    {
+                        guard.MoveGuard();
+                        guardX = guard.X;
+                        guardY = guard.Y;
 
-            //                guardSquare.MoveGuard();
-            //                var prevGuardSquare = GetSquare(guardX, guardY);
-            //                if (prevGuardSquare != null)
-            //                {
-            //                    prevGuardSquare.Content = Content.Empty;
-            //                    guardX = guardSquare.X;
-            //                    guardY = guardSquare.Y;
-            //                }
+                        guardBlocked = IsGuardBlockedOnNextMove();
+                        nextMoveOnBoard = IsNextMoveStillOnBoard();
 
-            //                PrintMap();
-            //            }
+                        PrintMap();
+                    }
 
-            //            if (guardBlocked)
-            //            {
-            //                var (x, y) = guardSquare.MoveGuardDryRun();
-            //                var square = GetSquare(x, y);
-            //                if (square.Content == Content.Obstacle)
-            //                {
-            //                    guardSquare.RotateGuard();
-            //                }
+                    if (guardBlocked)
+                    {
+                        guard.RotateGuard();
 
-            //                guardSquare.MoveGuard();
-            //                var prevGuardSquare = GetSquare(guardX, guardY);
-            //                if (prevGuardSquare != null)
-            //                {
-            //                    prevGuardSquare.Content = Content.Empty;
-            //                    guardX = guardSquare.X;
-            //                    guardY = guardSquare.Y;
-            //                }
-            //                PrintMap();
-            //            }
+                        guard.MoveGuard();
+                        var prevGuardContent = GetContent(guardX, guardY);
+                        if (prevGuardContent != null)
+                        {
+                            prevGuardContent = null;
+                        }
+                        PrintMap();
+                    }
 
-            //            guardBlocked = IsGuardBlockedOnNextMove();
-            //            nextMoveOnBoard = IsNextMoveStillOnBoard();
-            //        }
+                    guardBlocked = IsGuardBlockedOnNextMove();
+                    nextMoveOnBoard = IsNextMoveStillOnBoard();
+                }
 
-            //        Console.WriteLine("rest easy");
-            //    }
+                Console.WriteLine("rest easy");
+            }
 
-            //    //public void MoveGuard
+            public Content GetContentOnNextMove()
+            {
+                var guard = GetGuard();
+                var (x, y) = guard.MoveGuardDryRun();
+                return GetContent(x, y);
+            }
 
-            //    public Square GetNextMoveSquare()
-            //    {
-            //        var guardSquare = GetGuardSquare();
-            //        var (x, y) = ((GuardSquare)guardSquare).MoveGuardDryRun();
-            //        return GetSquare(x, y);
-            //    }
+            //public void MoveGuard
 
-            //    public bool IsGuardBlockedOnNextMove()
-            //    {
-            //        var square = GetNextMoveSquare();
-            //        if (square.Content == Content.Obstacle)
-            //        {
-            //            return true;
-            //        }
-            //        return false;
-            //    }
+            public bool IsGuardBlockedOnNextMove()
+            {
+                var nextMoveContent = GetContentOnNextMove();
+                if (nextMoveContent is Obstacle)
+                {
+                    return true;
+                }
+                return false;
+            }
 
-            //    public bool IsNextMoveStillOnBoard()
-            //    {
-            //        var square = GetNextMoveSquare();
-            //        if (square.X < 0 || square.Y < 0)
-            //        {
-            //            return false;
-            //        }
-            //        return true;
-            //    }
+            public bool IsNextMoveStillOnBoard()
+            {
+                var guard = GetGuard();
+                var (x, y) = guard.MoveGuardDryRun();
+                if ((x < 0) ||
+                    (y < 0) || 
+                    (x > MaxX) || 
+                    (y > MaxY))
+                {
+                    return false;
+                }
+                return true;
+            }
         }
 
         public abstract class Content
@@ -253,19 +257,14 @@ namespace AoC2024.Day6
 
             public (int, int) MoveGuardDryRun()
             {
-                switch (Direction)
+                return Direction switch
                 {
-                    case GuardDirection.North:
-                        return (X, Y - 1);
-                    case GuardDirection.South:
-                        return (X, Y + 1);
-                    case GuardDirection.East:
-                        return (X + 1, Y);
-                    case GuardDirection.West:
-                        return (X - 1, Y);
-                    default:
-                        throw new InvalidOperationException("Invalid guard movement");
-                }
+                    GuardDirection.North => (X, Y - 1),
+                    GuardDirection.South => (X, Y + 1),
+                    GuardDirection.East => (X + 1, Y),
+                    GuardDirection.West => (X - 1, Y),
+                    _ => throw new InvalidOperationException("Invalid guard movement"),
+                };
             }
 
             public override string StringDisplay()
