@@ -33,7 +33,7 @@ namespace AoC2024.Day6
         {
             var map = ParseInputStrings(inputStrings);
             map.PrintMap();
-            map.ExecuteGuardPatrol();
+            //map.ExecuteGuardPatrol();
             return 0;
         }
 
@@ -50,31 +50,31 @@ namespace AoC2024.Day6
             var map = new Map();
             for (int y = 0; y < inputStrings.Count; y++)
             {
-                var row = new List<Square>();
                 for (int x = 0; x < inputStrings[y].Length; x++)
                 {
-                    var content = CharToContent(inputStrings[y][x]);
-                    if (content == Content.GuardNorth)
+                    var charVal = inputStrings[y][x];
+                    var content = CharToContentObj(charVal);
+                    if (content != null)
                     {
-                        row.Add(new GuardSquare()
-                        {
-                            X = x,
-                            Y = y,
-                            Content = content
-                        });
-                    }
+                        content.X = x;
+                        content.Y = y;
 
-                    else
-                    {
-                        row.Add(new Square()
+                        bool v = content is Guard;
+                        if (v)
                         {
-                            X = x,
-                            Y = y,
-                            Content = content
-                        });
+                            var guard = (Guard)content;
+                            guard.Direction = charVal switch
+                            {
+                                '^' => GuardDirection.North,
+                                'v' => GuardDirection.South,
+                                '>' => GuardDirection.East,
+                                '<' => GuardDirection.West,
+                                _ => throw new InvalidOperationException("Invalid guard direction")
+                            };
+                        }
+                        map.Contents.Add(content);
                     }
                 }
-                map.Squares.AddRange(row);
             }
             return map;
         }
@@ -82,32 +82,35 @@ namespace AoC2024.Day6
         #region lil classes
         public class Map
         {
-            public List<Square> Squares = new List<Square>();
+            public List<Content> Contents = new();
 
-            public Square GetSquare(int x, int y)
+            public Content GetContent(int x, int y)
             {
-                return Squares.FirstOrDefault(s => s.X == x && s.Y == y);
+                return Contents.FirstOrDefault(s => s.X == x && s.Y == y);
             }
 
-            public Square GetGuardSquare()
+            public Content GetGuardSquare()
             {
-                return Squares.FirstOrDefault(s => IsGuardSquare(s));
+                return Contents.FirstOrDefault(s => s is Guard);
             }
 
             public void PrintMap()
             {
-                var maxX = Squares.Max(s => s.X);
-                var maxY = Squares.Max(s => s.Y);
+                var maxX = Contents.Max(c => c.X);
+                var maxY = Contents.Max(c => c.Y);
                 for (int y = 0; y <= maxY; y++)
                 {
                     var strBuilder = new StringBuilder();
-                    var row = new List<Square>();
                     for (int x = 0; x <= maxX; x++)
                     {
-                        var square = GetSquare(x, y);
-                        if (square != null)
+                        var content = GetContent(x, y);
+                        if (content != null)
                         {
-                            strBuilder.Append(ContentToString(square.Content));
+                            strBuilder.Append(content.StringDisplay());
+                        }
+                        else
+                        {
+                            strBuilder.Append(".");
                         }
                     }
 
@@ -118,109 +121,131 @@ namespace AoC2024.Day6
                 Console.WriteLine("\n\n\n\n");
             }
 
-            public void ExecuteGuardPatrol()
-            {
-                var guardSquare = GetGuardSquare();
-                var guardBlocked = false;
-                var nextMoveOnBoard = true;
+            //    public void ExecuteGuardPatrol()
+            //    {
+            //        var guardSquare = (GuardSquare)GetGuardSquare();
+            //        var guardX = guardSquare.X;
+            //        var guardY = guardSquare.Y;
+            //        var guardBlocked = false;
+            //        var nextMoveOnBoard = true;
 
-                while (nextMoveOnBoard)
-                {
-                    while (!guardBlocked && nextMoveOnBoard)
-                    {
-                        ((GuardSquare)guardSquare).MoveGuard();
-                        PrintMap();
-                    }
+            //        while (nextMoveOnBoard)
+            //        {
+            //            while (!guardBlocked && nextMoveOnBoard)
+            //            {
 
-                    if (guardBlocked)
-                    {
-                        var (x, y) = ((GuardSquare)guardSquare).MoveGuardDryRun();
-                        var square = GetSquare(x, y);
-                        if (square.Content == Content.Obstacle)
-                        {
-                            ((GuardSquare)guardSquare).RotateGuard();
-                        }
+            //                guardSquare.MoveGuard();
+            //                var prevGuardSquare = GetSquare(guardX, guardY);
+            //                if (prevGuardSquare != null)
+            //                {
+            //                    prevGuardSquare.Content = Content.Empty;
+            //                    guardX = guardSquare.X;
+            //                    guardY = guardSquare.Y;
+            //                }
 
-                        ((GuardSquare)guardSquare).MoveGuard();
-                        PrintMap();
-                    }
+            //                PrintMap();
+            //            }
 
-                    guardBlocked = IsGuardBlockedOnNextMove();
-                    nextMoveOnBoard = IsNextMoveStillOnBoard();
-                }
+            //            if (guardBlocked)
+            //            {
+            //                var (x, y) = guardSquare.MoveGuardDryRun();
+            //                var square = GetSquare(x, y);
+            //                if (square.Content == Content.Obstacle)
+            //                {
+            //                    guardSquare.RotateGuard();
+            //                }
 
-                Console.WriteLine("rest easy"); 
-            }
+            //                guardSquare.MoveGuard();
+            //                var prevGuardSquare = GetSquare(guardX, guardY);
+            //                if (prevGuardSquare != null)
+            //                {
+            //                    prevGuardSquare.Content = Content.Empty;
+            //                    guardX = guardSquare.X;
+            //                    guardY = guardSquare.Y;
+            //                }
+            //                PrintMap();
+            //            }
 
-            public Square GetNextMoveSquare()
-            {
-                var guardSquare = GetGuardSquare();
-                var (x, y) = ((GuardSquare)guardSquare).MoveGuardDryRun();
-                return GetSquare(x, y);
-            }
+            //            guardBlocked = IsGuardBlockedOnNextMove();
+            //            nextMoveOnBoard = IsNextMoveStillOnBoard();
+            //        }
 
-            public bool IsGuardBlockedOnNextMove()
-            {
-                var square = GetNextMoveSquare();
-                if (square.Content == Content.Obstacle)
-                {
-                    return true;
-                }
-                return false;
-            }
+            //        Console.WriteLine("rest easy");
+            //    }
 
-            public bool IsNextMoveStillOnBoard()
-            {
-                var square = GetNextMoveSquare();
-                if (square.X < 0 || square.Y < 0)
-                {
-                    return false;
-                }
-                return true;
-            }
+            //    //public void MoveGuard
+
+            //    public Square GetNextMoveSquare()
+            //    {
+            //        var guardSquare = GetGuardSquare();
+            //        var (x, y) = ((GuardSquare)guardSquare).MoveGuardDryRun();
+            //        return GetSquare(x, y);
+            //    }
+
+            //    public bool IsGuardBlockedOnNextMove()
+            //    {
+            //        var square = GetNextMoveSquare();
+            //        if (square.Content == Content.Obstacle)
+            //        {
+            //            return true;
+            //        }
+            //        return false;
+            //    }
+
+            //    public bool IsNextMoveStillOnBoard()
+            //    {
+            //        var square = GetNextMoveSquare();
+            //        if (square.X < 0 || square.Y < 0)
+            //        {
+            //            return false;
+            //        }
+            //        return true;
+            //    }
         }
 
-        public class Square
+        public abstract class Content
         {
-            public int X;
-            public int Y;
-            public virtual Content Content { get; set; }
+            public int X { get; set; }
+            public int Y { get; set; }
+            public abstract string StringDisplay();
         }
 
-        public static bool IsGuardSquare(Square square)
+        public class Obstacle : Content
         {
-            return square is GuardSquare;
+            public override string StringDisplay() => "#";
         }
 
-        public class GuardSquare : Square
+        public class Guard : Content
         {
-            public readonly Dictionary<Content, Content> RotationDict = new()
+            public readonly Dictionary<GuardDirection, GuardDirection> RotationDict = new()
             {
-                {Content.GuardNorth, Content.GuardEast},
-                {Content.GuardEast, Content.GuardSouth},
-                {Content.GuardSouth, Content.GuardWest},
-                {Content.GuardWest, Content.GuardNorth}
+                {GuardDirection.North, GuardDirection.East},
+                {GuardDirection.East, GuardDirection.South},
+                {GuardDirection.South, GuardDirection.West},
+                {GuardDirection.West, GuardDirection.North}
             };
+
+            public GuardDirection Direction { get; set; }
 
             public void RotateGuard()
             {
-                Content = RotationDict[Content];
+                Direction = RotationDict[Direction];
             }
 
             public void MoveGuard()
             {
-                switch (Content)
+                switch (Direction)
                 {
-                    case Content.GuardNorth:
-                        Y = Y-1;
+                    case GuardDirection.North:
+                        Y = Y - 1;
                         break;
-                    case Content.GuardSouth:
+                    case GuardDirection.South:
                         Y = Y + 1;
                         break;
-                    case Content.GuardEast:
+                    case GuardDirection.East:
                         X = X + 1;
                         break;
-                    case Content.GuardWest:
+                    case GuardDirection.West:
                         X = X - 1;
                         break;
                 }
@@ -228,84 +253,62 @@ namespace AoC2024.Day6
 
             public (int, int) MoveGuardDryRun()
             {
-                switch (Content)
+                switch (Direction)
                 {
-                    case Content.GuardNorth:
+                    case GuardDirection.North:
                         return (X, Y - 1);
-                    case Content.GuardSouth:
+                    case GuardDirection.South:
                         return (X, Y + 1);
-                    case Content.GuardEast:
+                    case GuardDirection.East:
                         return (X + 1, Y);
-                    case Content.GuardWest:
+                    case GuardDirection.West:
                         return (X - 1, Y);
                     default:
                         throw new InvalidOperationException("Invalid guard movement");
                 }
             }
-        }
 
+            public override string StringDisplay()
+            {
+                return Direction switch
+                {
+                    GuardDirection.North => "^",
+                    GuardDirection.South => "v",
+                    GuardDirection.East => ">",
+                    GuardDirection.West => "<",
+                    _ => throw new InvalidOperationException("Invalid guard movement"),
+                };
+            }
+
+        }
+        
         #region helper methods
-        public static Content StringToContent(string s)
-        {
-            return s switch
-            {
-                "." => Content.Empty,
-                "^" => Content.GuardNorth,
-                "v" => Content.GuardSouth,
-                ">" => Content.GuardEast,
-                "<" => Content.GuardWest,
-                _ => Content.Obstacle,
-            };
-        }
+       
 
-        public static string ContentToString(Content content)
-        {
-            return content switch
-            {
-                Content.Empty => ".",
-                Content.GuardNorth => "^",
-                Content.GuardSouth => "v",
-                Content.GuardEast => ">",
-                Content.GuardWest => "<",
-                _ => "#",
-            };
-        }
-
-        public static Content CharToContent(char c)
+        public static Content? CharToContentObj(char c)
         {
             return c switch
             {
-                '.' => Content.Empty,
-                '^' => Content.GuardNorth,
-                'v' => Content.GuardSouth,
-                '>' => Content.GuardEast,
-                '<' => Content.GuardWest,
-                _ => Content.Obstacle,
+                '.' => null,
+                '^' => new Guard(),
+                'v' => new Guard(),
+                '>' => new Guard(),
+                '<' => new Guard(),
+                _ => new Obstacle()
             };
         }
 
-        public static char ContentToChar(Content content)
-        {
-            return content switch
-            {
-                Content.Empty => '.',
-                Content.GuardNorth => '^',
-                Content.GuardSouth => 'v',
-                Content.GuardEast => '>',
-                Content.GuardWest => '<',
-                _ => '#',
-            };
-        }
+       
 
         #endregion
-        public enum Content
+        
+
+        public enum GuardDirection
         {
-            Empty,
-            Obstacle,
-            GuardNorth,
-            GuardSouth,
-            GuardEast,
-            GuardWest
+            North,
+            South,
+            East,
+            West
         }
 
         #endregion
