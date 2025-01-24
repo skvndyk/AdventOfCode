@@ -22,10 +22,10 @@ namespace AoC2024.Day6
             var exInputStrings = Common.Utilities.ReadFileToStrings(exFilePath);
             var inputStrings = Common.Utilities.ReadFileToStrings(filePath);
 
-            Console.WriteLine($"Example Part 1 answer: {Part1(exInputStrings)}");
+            //Console.WriteLine($"Example Part 1 answer: {Part1(exInputStrings)}");
             //Console.WriteLine($"Example Part 2 answer: {Part2(exInputStrings)}");
 
-            //Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
+            Console.WriteLine($"Part 1 answer: {Part1(inputStrings)}");
             //Console.WriteLine($"Part 2 answer: {Part2(inputStrings)}");
         }
 
@@ -33,8 +33,8 @@ namespace AoC2024.Day6
         {
             var map = ParseInputStrings(inputStrings);
             map.PrintMap();
-            map.ExecuteGuardPatrol();
-            return 0;
+            var traversedPoints = map.ExecuteGuardPatrol();
+            return traversedPoints.Count;
         }
 
         private static int Part2(List<string> inputStrings)
@@ -131,9 +131,11 @@ namespace AoC2024.Day6
                 Console.WriteLine("\n\n\n\n");
             }
 
-            public void ExecuteGuardPatrol()
+            public HashSet<(int, int)> ExecuteGuardPatrol()
             {
+                var traversedPoints = new HashSet<(int, int)>();
                 var guard = GetGuard();
+                traversedPoints.Add((guard.X, guard.Y));
                 var guardX = guard.X;
                 var guardY = guard.Y;
                 var guardBlocked = false;
@@ -146,11 +148,12 @@ namespace AoC2024.Day6
                         guard.MoveGuard();
                         guardX = guard.X;
                         guardY = guard.Y;
+                        traversedPoints.Add((guardX, guardY));
 
                         guardBlocked = IsGuardBlockedOnNextMove();
                         nextMoveOnBoard = IsNextMoveStillOnBoard();
 
-                        PrintMap();
+                        //PrintMap();
                     }
 
                     if (guardBlocked)
@@ -158,12 +161,13 @@ namespace AoC2024.Day6
                         guard.RotateGuard();
 
                         guard.MoveGuard();
+                        traversedPoints.Add((guard.X, guard.Y));
                         var prevGuardContent = GetContent(guardX, guardY);
                         if (prevGuardContent != null)
                         {
                             prevGuardContent = null;
                         }
-                        PrintMap();
+                        //PrintMap();
                     }
 
                     guardBlocked = IsGuardBlockedOnNextMove();
@@ -171,6 +175,7 @@ namespace AoC2024.Day6
                 }
 
                 Console.WriteLine("rest easy");
+                return traversedPoints;
             }
 
             public Content GetContentOnNextMove()
